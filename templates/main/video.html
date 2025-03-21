@@ -1,0 +1,118 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ video.title }} - ЭдуВидео{% endblock %}
+
+{% block content %}
+<div class="video-page-layout">
+    <div class="video-content">
+        <div class="video-player-container">
+            <div class="video-player">
+                <!-- В реальном проекте здесь будет плеер видео -->
+                <div style="background-color: #000; width: 100%; height: 500px; display: flex; justify-content: center; align-items: center;">
+                    <div style="color: white; font-size: 20px;">Видео проигрыватель для {{ video.title }}</div>
+                </div>
+            </div>
+            
+            <div class="video-details">
+                <h1>{{ video.title }}</h1>
+                <div class="video-info-bar">
+                    <div class="views-info">{{ video.views }} • {{ video.age }}</div>
+                    <div class="actions-bar">
+                        <button class="action-button">👍 Нравится</button>
+                        <button class="action-button">👎 Не нравится</button>
+                        <button class="action-button">↗️ Поделиться</button>
+                        <button class="action-button">💾 Сохранить</button>
+                    </div>
+                </div>
+                
+                <div class="channel-info">
+                    <div class="channel-avatar">{{ video.channel|first }}</div>
+                    <div class="channel-details">
+                        <div class="channel-name">{{ video.channel }}</div>
+                        <div class="subscribers">10K подписчиков</div>
+                    </div>
+                    <button class="subscribe-button">Подписаться</button>
+                </div>
+                
+                <div class="video-description">
+                    <p>Описание видео. Здесь будет подробная информация о содержании видео.</p>
+                </div>
+            </div>
+            
+            <div class="comments-section">
+                <h2>Комментарии</h2>
+                <div class="comment-form">
+                    <div class="user-avatar">У</div>
+                    <input type="text" placeholder="Добавить комментарий...">
+                </div>
+                
+                <div class="comments-list">
+                    <div class="comment">
+                        <div class="comment-avatar">К</div>
+                        <div class="comment-content">
+                            <div class="comment-author">Комментатор</div>
+                            <div class="comment-text">Очень полезное видео! Спасибо за объяснение.</div>
+                            <div class="comment-actions">
+                                <button class="comment-like">👍 24</button>
+                                <button class="comment-dislike">👎</button>
+                                <button class="comment-reply">Ответить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="related-videos">
+        <h3>Рекомендуемые видео</h3>
+        <div class="related-videos-list" id="related-videos-container">
+            <!-- Рекомендуемые видео будут добавлены с помощью JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Получаем текущий ID видео из URL
+        const currentPath = window.location.pathname;
+        const currentVideoId = parseInt(currentPath.split('/').filter(Boolean)[1]);
+        
+        // Получаем контейнер для рекомендуемых видео
+        const relatedVideosContainer = document.getElementById('related-videos-container');
+        
+        // Создаем рекомендации из существующих видео, исключая текущее
+        if (relatedVideosContainer && window.videoData) {
+            // Фильтруем видео, исключая текущее
+            const relatedVideos = window.videoData.filter(video => video.id !== currentVideoId);
+            
+            // Берем только первые 5 видео для рекомендаций
+            const recommendedVideos = relatedVideos.slice(0, 5);
+            
+            // Добавляем каждое видео в контейнер
+            recommendedVideos.forEach(video => {
+                const videoElement = document.createElement('div');
+                videoElement.className = 'related-video-card';
+                videoElement.onclick = function() {
+                    window.location.href = `/video/${video.id}/`;
+                };
+                
+                videoElement.innerHTML = `
+                    <div class="related-thumbnail">
+                        <img src="/static/preview_${video.id}.jpg" onerror="this.src='/static/placeholder.jpg'" alt="${video.title}">
+                        <div class="duration">${video.duration}</div>
+                    </div>
+                    <div class="related-info">
+                        <div class="related-title">${video.title}</div>
+                        <div class="related-channel">${video.channel}</div>
+                        <div class="related-stats">${video.views} • ${video.age}</div>
+                    </div>
+                `;
+                
+                relatedVideosContainer.appendChild(videoElement);
+            });
+        }
+    });
+</script>
+{% endblock %}

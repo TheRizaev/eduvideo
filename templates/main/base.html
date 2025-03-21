@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ЭдуВидео{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dark-theme">
+    <div class="theme-transition dark"></div>
+    
+    <header>
+        <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
+        <div class="logo">Эду<span>Видео</span></div>
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Поиск...">
+                <button class="search-button">🔍</button>
+                <div class="search-dropdown" id="search-dropdown">
+                    <!-- Результаты поиска будут добавляться сюда -->
+                </div>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="theme-toggle">
+                <span class="theme-icon sun">☀️</span>
+                <span class="theme-icon moon">🌙</span>
+                <span class="toggle-text">Светлая тема</span>
+            </button>
+            <div class="user-menu">
+                <div class="avatar">У</div>
+                <div class="user-dropdown">
+                    <div class="user-header">
+                        <div class="avatar">У</div>
+                        <div>
+                            <div class="user-name">Пользователь</div>
+                            <div class="user-email">user@example.com</div>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">👤</div>
+                        <div>Ваш профиль</div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">⚙️</div>
+                        <div>Настройки</div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">🎓</div>
+                        <div>Мои курсы</div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">📚</div>
+                        <div>Библиотека</div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">📝</div>
+                        <div>Прогресс обучения</div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">🔍</div>
+                        <div>Помощь</div>
+                    </div>
+                    <div class="dropdown-item">
+                        <div class="icon">🚪</div>
+                        <div>Выход</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="overlay"></div>
+    
+    <div class="main-container">
+        <div class="sidebar" id="sidebar">
+            <div class="menu-item active">
+                <div class="menu-icon">🏠</div>
+                <div class="menu-text">Главная</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">🎓</div>
+                <div class="menu-text">Курсы</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">📚</div>
+                <div class="menu-text">Библиотека</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">⏱</div>
+                <div class="menu-text">История</div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-icon">✓</div>
+                <div class="menu-text">Подписки</div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">ОБРАЗОВАНИЕ</div>
+                <div class="menu-item">
+                    <div class="menu-icon">🧪</div>
+                    <div class="menu-text">Наука</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-icon">🔢</div>
+                    <div class="menu-text">Математика</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-icon">🌍</div>
+                    <div class="menu-text">История</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-icon">💻</div>
+                    <div class="menu-text">Программирование</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-icon">📊</div>
+                    <div class="menu-text">Экономика</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">ИНСТРУМЕНТЫ</div>
+                <div class="menu-item">
+                    <div class="menu-icon">📝</div>
+                    <div class="menu-text">Заметки</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-icon">📅</div>
+                    <div class="menu-text">Расписание</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-icon">🔍</div>
+                    <div class="menu-text">Поиск</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
