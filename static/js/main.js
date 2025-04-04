@@ -7,7 +7,7 @@ const videoData = [
         views: "245K просмотров",
         age: "1 неделя назад",
         duration: "28:45",
-        preview: "ml_neural_networks.jpg"
+        preview: "1.jpg"
     },
     {
         id: 2,
@@ -16,7 +16,7 @@ const videoData = [
         views: "189K просмотров",
         age: "2 недели назад",
         duration: "42:18",
-        preview: "integral_calculus.jpg"
+        preview: "2.jpg"
     },
     {
         id: 3,
@@ -25,7 +25,7 @@ const videoData = [
         views: "423K просмотров",
         age: "3 дня назад",
         duration: "35:12",
-        preview: "python_data_analysis.jpg"
+        preview: "3.jpg"
     },
     {
         id: 4,
@@ -34,7 +34,7 @@ const videoData = [
         views: "156K просмотров",
         age: "1 день назад",
         duration: "45:23",
-        preview: "quantum_physics.jpg"
+        preview: "4.jpg"
     },
     {
         id: 5,
@@ -43,7 +43,7 @@ const videoData = [
         views: "112K просмотров",
         age: "5 дней назад",
         duration: "32:49",
-        preview: "genetics_basics.jpg"
+        preview: "5.jpg"
     },
     {
         id: 6,
@@ -52,7 +52,7 @@ const videoData = [
         views: "174K просмотров",
         age: "2 дня назад",
         duration: "38:17",
-        preview: "ancient_rome.jpg"
+        preview: "6.jpg"
     },
     {
         id: 7,
@@ -61,7 +61,7 @@ const videoData = [
         views: "145K просмотров",
         age: "4 дня назад",
         duration: "26:35",
-        preview: "economics.jpg"
+        preview: "7.jpg"
     },
     {
         id: 8,
@@ -70,7 +70,7 @@ const videoData = [
         views: "132K просмотров",
         age: "6 дней назад",
         duration: "41:52",
-        preview: "organic_chemistry.jpg"
+        preview: "8.jpg"
     },
     {
         id: 9,
@@ -79,7 +79,7 @@ const videoData = [
         views: "210К просмотров",
         age: "2 дня назад",
         duration: "47:21",
-        preview: "javascript_async.jpg"
+        preview: "9.jpg"
     },
     {
         id: 10,
@@ -88,7 +88,7 @@ const videoData = [
         views: "328К просмотров",
         age: "5 дней назад",
         duration: "34:17",
-        preview: "black_holes.jpg"
+        preview: "10.jpg"
     },
     {
         id: 11,
@@ -97,7 +97,7 @@ const videoData = [
         views: "167K просмотров",
         age: "3 дня назад",
         duration: "39:45",
-        preview: "linear_algebra.jpg"
+        preview: "11.jpg"
     },
     {
         id: 12,
@@ -106,7 +106,7 @@ const videoData = [
         views: "198K просмотров",
         age: "1 неделя назад",
         duration: "53:28",
-        preview: "react_redux.jpg"
+        preview: "12.jpg"
     },
     {
         id: 13,
@@ -115,7 +115,7 @@ const videoData = [
         views: "98K просмотров",
         age: "4 дня назад",
         duration: "46:39",
-        preview: "biochemistry.jpg"
+        preview: "13.jpg"
     },
     {
         id: 14,
@@ -124,7 +124,7 @@ const videoData = [
         views: "147K просмотров",
         age: "2 недели назад",
         duration: "57:12",
-        preview: "differential_equations.jpg"
+        preview: "14.jpg"
     },
     {
         id: 15,
@@ -133,7 +133,7 @@ const videoData = [
         views: "287K просмотров",
         age: "3 дня назад",
         duration: "41:05",
-        preview: "deep_learning.jpg"
+        preview: "15.jpg"
     },
     {
         id: 16,
@@ -142,7 +142,7 @@ const videoData = [
         views: "201K просмотров",
         age: "1 неделя назад",
         duration: "32:56",
-        preview: "sql_basics.jpg"
+        preview: "16.jpg"
     },
     {
         id: 17,
@@ -151,7 +151,7 @@ const videoData = [
         views: "114K просмотров",
         age: "5 дней назад",
         duration: "48:34",
-        preview: "ancient_philosophy.jpg"
+        preview: "17.jpg"
     },
     {
         id: 18,
@@ -160,7 +160,7 @@ const videoData = [
         views: "132K просмотров",
         age: "6 дней назад",
         duration: "37:18",
-        preview: "probability_theory.jpg"
+        preview: "18.jpg"
     },
     {
         id: 19,
@@ -169,7 +169,7 @@ const videoData = [
         views: "178K просмотров",
         age: "4 дня назад",
         duration: "44:10",
-        preview: "nervous_system.jpg"
+        preview: "19.jpg"
     },
     {
         id: 20,
@@ -178,7 +178,7 @@ const videoData = [
         views: "224K просмотров",
         age: "2 недели назад",
         duration: "36:45",
-        preview: "html_css.jpg"
+        preview: "20.jpg"
     }
 ];
 
@@ -221,7 +221,7 @@ function createVideoCard(videoData, delay = 0) {
 
 // Переменные для управления загрузкой
 let currentIndex = 0;
-const videosPerPage = 20;
+const videosPerPage = 15;
 let loadingSpinner, videosContainer;
 let isLoading = false;
 

@@ -1,0 +1,71 @@
+/* Base styles and variables */
+:root {
+    --primary-color: #6ccff6;
+    --dark-bg: #001011;
+    --gray-color: #787780;
+    --light-bg: #fffffc;
+    --accent-color: #98ce00;
+    --text-light: #fffffc;
+    --text-dark: #001011;
+}
+
+/* Основные стили */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+}
+
+body.light-theme {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+}
+
+body.dark-theme {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #7ba700;
+}
+
+/* Theme Transition Animation */
+.theme-transition {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    pointer-events: none;
+    clip-path: circle(0% at top right);
+    transition: clip-path 1s ease-in-out;
+}
+
+.theme-transition.animating {
+    clip-path: circle(150% at top right);
+}
+
+.theme-transition.light {
+    background-color: var(--light-bg);
+}
+
+.theme-transition.dark {
+    background-color: var(--dark-bg);
+}

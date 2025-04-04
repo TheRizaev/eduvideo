@@ -100,7 +100,7 @@
                 
                 videoElement.innerHTML = `
                     <div class="related-thumbnail">
-                        <img src="/static/preview_${video.id}.jpg" onerror="this.src='/static/placeholder.jpg'" alt="${video.title}">
+                        <img src="/static/previews/${video.id}.jpg" onerror="this.src='/static/placeholder.jpg'" alt="${video.title}">
                         <div class="duration">${video.duration}</div>
                     </div>
                     <div class="related-info">

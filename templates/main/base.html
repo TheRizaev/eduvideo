@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ЭдуВидео{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 </head>
 <body class="dark-theme">
     <div class="theme-transition dark"></div>
@@ -28,45 +29,53 @@
                 <span class="theme-icon moon">🌙</span>
                 <span class="toggle-text">Светлая тема</span>
             </button>
+            
             <div class="user-menu">
-                <div class="avatar">У</div>
-                <div class="user-dropdown">
-                    <div class="user-header">
-                        <div class="avatar">У</div>
-                        <div>
-                            <div class="user-name">Пользователь</div>
-                            <div class="user-email">user@example.com</div>
+                {% if user.is_authenticated %}
+                    <div class="avatar">{{ user.username|first }}</div>
+                    <div class="user-dropdown">
+                        <div class="user-header">
+                            <div class="avatar">{{ user.username|first }}</div>
+                            <div>
+                                <div class="user-name">{{ user.username }}</div>
+                                <div class="user-email">{{ user.email }}</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='{% url 'profile' %}'">
+                            <div class="icon">👤</div>
+                            <div>Мой профиль</div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon">⚙️</div>
+                            <div>Настройки</div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon">🎓</div>
+                            <div>Мои курсы</div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon">📚</div>
+                            <div>Библиотека</div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon">📝</div>
+                            <div>Прогресс обучения</div>
+                        </div>
+                        <div class="dropdown-item">
+                            <div class="icon">🔍</div>
+                            <div>Помощь</div>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='{% url 'logout' %}'">
+                            <div class="icon">🚪</div>
+                            <div>Выход</div>
                         </div>
                     </div>
-                    <div class="dropdown-item">
-                        <div class="icon">👤</div>
-                        <div>Ваш профиль</div>
+                {% else %}
+                    <div class="auth-buttons">
+                        <a href="{% url 'login' %}" class="login-button">Войти</a>
+                        <a href="{% url 'register' %}" class="register-button">Регистрация</a>
                     </div>
-                    <div class="dropdown-item">
-                        <div class="icon">⚙️</div>
-                        <div>Настройки</div>
-                    </div>
-                    <div class="dropdown-item">
-                        <div class="icon">🎓</div>
-                        <div>Мои курсы</div>
-                    </div>
-                    <div class="dropdown-item">
-                        <div class="icon">📚</div>
-                        <div>Библиотека</div>
-                    </div>
-                    <div class="dropdown-item">
-                        <div class="icon">📝</div>
-                        <div>Прогресс обучения</div>
-                    </div>
-                    <div class="dropdown-item">
-                        <div class="icon">🔍</div>
-                        <div>Помощь</div>
-                    </div>
-                    <div class="dropdown-item">
-                        <div class="icon">🚪</div>
-                        <div>Выход</div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </header>
