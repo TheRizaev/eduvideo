@@ -49,10 +49,23 @@
                             <div class="icon">👤</div>
                             <div>Мой профиль</div>
                         </div>
+                        
+                        {% if user.profile.is_author %}
                         <div class="dropdown-item" onclick="window.location.href='{% url 'studio' %}'">
                             <div class="icon">🎬</div>
                             <div>Студия</div>
                         </div>
+                        {% elif not user.profile.author_application_pending %}
+                        <div class="dropdown-item" onclick="window.location.href='{% url 'become_author' %}'">
+                            <div class="icon">✍️</div>
+                            <div>Стать автором</div>
+                        </div>
+                        {% else %}
+                        <div class="dropdown-item" style="cursor: default; opacity: 0.7;">
+                            <div class="icon">⏳</div>
+                            <div>Заявка на рассмотрении</div>
+                        </div>
+                        {% endif %}
                         <div class="dropdown-item">
                             <div class="icon">⚙️</div>
                             <div>Настройки</div>

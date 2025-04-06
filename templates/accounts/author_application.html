@@ -1,0 +1,88 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Стать автором - KRONIK{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-form-container" style="max-width: 600px;">
+        <h2 class="auth-title">Стать автором</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="author-info-text">
+            <p>Авторы KRONIK могут создавать и публиковать образовательный видеоконтент на нашей платформе.
+            Мы стремимся поддерживать высокое качество образовательных материалов,
+            поэтому каждая заявка проходит проверку нашей командой.</p>
+        </div>
+        
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_credentials">Образование и опыт</label>
+                {{ form.credentials }}
+                {% if form.credentials.errors %}
+                    <div class="form-error">{{ form.credentials.errors }}</div>
+                {% endif %}
+                <small class="form-help">Расскажите о вашем образовании, опыте работы, достижениях и почему вы хотите стать автором.</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Выберите области экспертизы</label>
+                <div class="expertise-areas-container">
+                    {{ form.expertise_areas }}
+                </div>
+                {% if form.expertise_areas.errors %}
+                    <div class="form-error">{{ form.expertise_areas.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="auth-button">Отправить заявку</button>
+        </form>
+        
+        <div class="auth-links">
+            <p><a href="{% url 'profile' %}">Вернуться в профиль</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .expertise-areas-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .expertise-areas-container label {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+        margin-bottom: 5px;
+    }
+    
+    .expertise-areas-container input[type="checkbox"] {
+        margin-right: 8px;
+        width: auto;
+    }
+    
+    .author-info-text {
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+    
+    .form-help {
+        display: block;
+        color: var(--gray-color);
+        margin-top: 5px;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}

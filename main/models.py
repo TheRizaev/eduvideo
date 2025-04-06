@@ -34,8 +34,23 @@ class UserProfile(models.Model):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     
+    # Новые поля для авторов
+    is_author = models.BooleanField(default=False)
+    author_application_pending = models.BooleanField(default=False)
+    expertise_areas = models.ManyToManyField('ExpertiseArea', blank=True, related_name='experts')
+    credentials = models.TextField(blank=True, help_text="Образование, сертификаты и опыт")
+    
     def __str__(self):
         return f'{self.user.username} Profile'
         
     def get_absolute_url(self):
         return reverse('profile')
+
+
+# Добавьте новую модель для областей экспертизы
+class ExpertiseArea(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    
+    def __str__(self):
+        return self.name

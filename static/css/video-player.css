@@ -1,0 +1,239 @@
+/* Улучшенный плеер для KRONIK */
+.vjs-theme-kronik {
+    --vjs-theme-primary: var(--accent-color);
+    --vjs-theme-secondary: #110108;
+    --vjs-theme-highlight: #ffffff;
+    --vjs-theme-background: rgba(17, 1, 8, 0.8);
+}
+
+/* Основной дизайн кнопки воспроизведения */
+.vjs-theme-kronik .vjs-big-play-button {
+    background-color: rgba(159, 37, 88, 0.8);
+    border: none;
+    border-radius: 50%;
+    height: 80px;
+    width: 80px;
+    margin-left: -40px;
+    margin-top: -40px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.vjs-theme-kronik:hover .vjs-big-play-button {
+    background-color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* Панель управления */
+.vjs-theme-kronik .vjs-control-bar {
+    background-color: var(--vjs-theme-background);
+    border-radius: 0 0 8px 8px;
+    height: 4em; /* Увеличенная высота для лучшего управления на мобильных */
+}
+
+/* Улучшения для полосы прогресса */
+.vjs-theme-kronik .vjs-progress-control {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+}
+
+.vjs-theme-kronik .vjs-progress-control:hover .vjs-progress-holder {
+    height: 10px;
+}
+
+.vjs-theme-kronik .vjs-progress-holder {
+    height: 4px;
+    transition: height 0.2s ease;
+}
+
+.vjs-theme-kronik .vjs-play-progress {
+    background-color: var(--accent-color);
+}
+
+.vjs-theme-kronik .vjs-load-progress {
+    background-color: rgba(159, 37, 88, 0.4);
+}
+
+.vjs-theme-kronik .vjs-play-progress:before {
+    font-size: 1.2em;
+    top: -0.3em;
+}
+
+/* Громкость */
+.vjs-theme-kronik .vjs-volume-panel {
+    margin-right: 10px;
+}
+
+.vjs-theme-kronik .vjs-volume-level {
+    background-color: var(--accent-color);
+}
+
+/* Кнопки */
+.vjs-theme-kronik .vjs-control {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.vjs-theme-kronik .vjs-control:hover {
+    opacity: 1;
+}
+
+/* Меню для переключения качества */
+.vjs-theme-kronik .vjs-menu-button-popup .vjs-menu {
+    width: 15em;
+    left: -5em;
+}
+
+.vjs-theme-kronik .vjs-menu-button-popup .vjs-menu-content {
+    background-color: var(--vjs-theme-background);
+    border-radius: 4px;
+}
+
+.vjs-theme-kronik .vjs-menu li {
+    padding: 8px 15px;
+    font-size: 14px;
+    text-shadow: none;
+    text-transform: none;
+    transition: background-color 0.2s ease;
+}
+
+.vjs-theme-kronik .vjs-menu li.vjs-selected,
+.vjs-theme-kronik .vjs-menu li.vjs-menu-item:focus,
+.vjs-theme-kronik .vjs-menu li.vjs-menu-item:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Текущее время и продолжительность */
+.vjs-theme-kronik .vjs-time-control {
+    font-size: 13px;
+    font-weight: 600;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+/* Плавная анимация для всех элементов управления */
+.vjs-theme-kronik .vjs-control,
+.vjs-theme-kronik .vjs-time-control,
+.vjs-theme-kronik .vjs-volume-panel {
+    transition: all 0.3s ease;
+}
+
+/* Кнопка полноэкранного режима */
+.vjs-theme-kronik .vjs-fullscreen-control {
+    margin-right: 10px;
+}
+
+/* Стили для светлой темы */
+.light-theme .vjs-theme-kronik .vjs-control-bar {
+    background-color: rgba(250, 250, 250, 0.9);
+    color: #333;
+}
+
+.light-theme .vjs-theme-kronik .vjs-menu-button-popup .vjs-menu-content {
+    background-color: rgba(250, 250, 250, 0.9);
+    color: #333;
+}
+
+.light-theme .vjs-theme-kronik .vjs-time-control {
+    color: #333;
+}
+
+/* Улучшения для мобильной версии */
+@media (max-width: 768px) {
+    .vjs-theme-kronik .vjs-time-control {
+        display: block;
+    }
+    
+    .vjs-theme-kronik .vjs-remaining-time {
+        display: none;
+    }
+}
+
+/* Панель подсказок (при наведении) */
+.vjs-theme-kronik .vjs-control:before {
+    line-height: 50px;
+}
+
+/* Анимация загрузки */
+.vjs-theme-kronik .vjs-loading-spinner {
+    border: 4px solid rgba(159, 37, 88, 0.25);
+}
+
+.vjs-theme-kronik .vjs-loading-spinner:before,
+.vjs-theme-kronik .vjs-loading-spinner:after {
+    border: inherit;
+}
+
+.vjs-theme-kronik .vjs-loading-spinner:before {
+    border-top-color: var(--accent-color);
+}
+
+.vjs-resume-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(17, 1, 8, 0.8);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    z-index: 10;
+    max-width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.5s ease;
+}
+
+.light-theme .vjs-resume-overlay {
+    background-color: rgba(250, 250, 250, 0.9);
+    color: #333;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.resume-message {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.resume-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.resume-yes, .resume-no {
+    padding: 5px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.resume-yes {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.resume-no {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.light-theme .resume-no {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.resume-yes:hover {
+    background-color: #7d1e46;
+}
+
+.resume-no:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.light-theme .resume-no:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}

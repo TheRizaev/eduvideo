@@ -7,8 +7,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, AuthorApplicationForm
 from django.core.paginator import Paginator
+from django.core.mail import send_mail
+from django.conf import settings
 
 def index(request):
     categories = Category.objects.all()
@@ -389,15 +391,64 @@ def profile_view(request):
 def studio_view(request):
     """
     View for the creator studio page.
-    Only authenticated users can access this page.
+    Only authenticated users who are approved authors can access this page.
     """
-    # Get videos uploaded by the current user
-    # In a real project, you would filter videos by user
-    # videos = Video.objects.filter(user=request.user).order_by('-upload_date')
-    
-    # For demonstration, we'll use empty data now
+    # Проверяем, является ли пользователь автором
+    if not request.user.profile.is_author:
+        messages.error(request, 'У вас нет доступа к Студии. Вы должны стать автором, чтобы получить доступ.')
+        return redirect('become_author')
+        
+    # Для демонстрации, мы будем использовать пустой список видео
     videos = []
     
     return render(request, 'studio/studio.html', {
         'videos': videos
     })
+
+@login_required
+def author_application(request):
+    # Проверяем, уже ли пользователь автор или подал заявку
+    if request.user.profile.is_author:
+        messages.info(request, 'Вы уже являетесь автором!')
+        return redirect('studio')
+        
+    if request.user.profile.author_application_pending:
+        messages.info(request, 'Ваша заявка на авторство уже находится на рассмотрении.')
+        return redirect('profile')
+    
+    if request.method == 'POST':
+        form = AuthorApplicationForm(request.POST, instance=request.user.profile)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.author_application_pending = True
+            profile.save()
+            form.save_m2m()  # Сохраняем many-to-many поля
+            
+            # Отправляем уведомление администратору
+            subject = f'Новая заявка на авторство от {request.user.username}'
+            message = f"""
+            Пользователь {request.user.username} ({request.user.email}) подал заявку на авторство.
+            
+            Области экспертизы: {', '.join(area.name for area in form.cleaned_data['expertise_areas'])}
+            
+            Данные о квалификации:
+            {profile.credentials}
+            
+            Для подтверждения или отклонения заявки перейдите в админ-панель:
+            {request.build_absolute_uri('/admin/main/userprofile/')}
+            """
+            
+            send_mail(
+                subject, 
+                message, 
+                settings.DEFAULT_FROM_EMAIL, 
+                [settings.ADMIN_EMAIL],  # Добавьте свой email в settings.py
+                fail_silently=False
+            )
+            
+            messages.success(request, 'Ваша заявка на авторство успешно отправлена! Мы свяжемся с вами после рассмотрения.')
+            return redirect('profile')
+    else:
+        form = AuthorApplicationForm(instance=request.user.profile)
+    
+    return render(request, 'accounts/author_application.html', {'form': form})

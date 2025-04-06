@@ -1,17 +1,44 @@
 {% extends 'main/base.html' %}
 {% load static %}
+{% load humanize %}
 
-{% block title %}{{ video.title }} - ЭдуВидео{% endblock %}
+{% block title %}{{ video.title }} - KRONIK{% endblock %}
+
+{% block head_extras %}
+<!-- Основной плеер -->
+<link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+
+<!-- Плагины для видеоплеера -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.1.0/videojs-contrib-quality-levels.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-http-source-selector/1.1.6/videojs-http-source-selector.min.js"></script>
+
+<!-- Наш кастомный плеер -->
+<script src="{% static 'js/video-player.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 <div class="video-page-layout">
     <div class="video-content">
         <div class="video-player-container">
             <div class="video-player">
-                <!-- В реальном проекте здесь будет плеер видео -->
-                <div style="background-color: #000; width: 100%; height: 500px; display: flex; justify-content: center; align-items: center;">
-                    <div style="color: white; font-size: 20px;">Видео проигрыватель для {{ video.title }}</div>
-                </div>
+                <video
+                    id="kronik-player"
+                    class="video-js vjs-big-play-centered vjs-theme-kronik"
+                    controls
+                    preload="auto"
+                    poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% else %}{% static 'placeholder.jpg' %}{% endif %}"
+                    data-setup="{}"
+                >
+                    <!-- В реальном приложении здесь будут разные источники для разных качеств -->
+                    <source src="{{ video.video_file.url|default:'#' }}" type="video/mp4" label="720p" />
+                    <source src="{{ video.video_file.url|default:'#' }}" type="video/mp4" label="480p" />
+                    <source src="{{ video.video_file.url|default:'#' }}" type="video/mp4" label="360p" />
+                    
+                    <p class="vjs-no-js">
+                        Для просмотра видео включите JavaScript и обновите браузер до поддерживающего HTML5 видео.
+                    </p>
+                </video>
             </div>
             
             <div class="video-details">
@@ -19,8 +46,8 @@
                 <div class="video-info-bar">
                     <div class="views-info">{{ video.views }} • {{ video.age }}</div>
                     <div class="actions-bar">
-                        <button class="action-button">👍 Нравится</button>
-                        <button class="action-button">👎 Не нравится</button>
+                        <button class="action-button" id="likeButton">👍 <span id="likeCount">0</span></button>
+                        <button class="action-button" id="dislikeButton">👎 <span id="dislikeCount">0</span></button>
                         <button class="action-button">↗️ Поделиться</button>
                         <button class="action-button">💾 Сохранить</button>
                     </div>
@@ -36,30 +63,68 @@
                 </div>
                 
                 <div class="video-description">
-                    <p>Описание видео. Здесь будет подробная информация о содержании видео.</p>
+                    <p>{{ video.description|default:"Описание видео отсутствует." }}</p>
                 </div>
             </div>
             
             <div class="comments-section">
                 <h2>Комментарии</h2>
                 <div class="comment-form">
-                    <div class="user-avatar">У</div>
-                    <input type="text" placeholder="Добавить комментарий...">
+                    <div class="user-avatar">{% if user.is_authenticated %}{{ user.username|first }}{% else %}Г{% endif %}</div>
+                    <input type="text" placeholder="{% if user.is_authenticated %}Добавить комментарий...{% else %}Войдите, чтобы комментировать{% endif %}" {% if not user.is_authenticated %}disabled{% endif %}>
                 </div>
                 
                 <div class="comments-list">
-                    <div class="comment">
-                        <div class="comment-avatar">К</div>
-                        <div class="comment-content">
-                            <div class="comment-author">Комментатор</div>
-                            <div class="comment-text">Очень полезное видео! Спасибо за объяснение.</div>
-                            <div class="comment-actions">
-                                <button class="comment-like">👍 24</button>
-                                <button class="comment-dislike">👎</button>
-                                <button class="comment-reply">Ответить</button>
+                    {% if comments %}
+                        {% for comment in comments %}
+                        <div class="comment">
+                            <div class="comment-avatar">{{ comment.user.username|first }}</div>
+                            <div class="comment-content">
+                                <div class="comment-author">{{ comment.user.username }}</div>
+                                <div class="comment-text">{{ comment.content }}</div>
+                                <div class="comment-meta">{{ comment.created_at|naturaltime }}</div>
+                                <div class="comment-actions">
+                                    <button class="comment-like">👍 <span>{{ comment.likes|default:"0" }}</span></button>
+                                    <button class="comment-dislike">👎</button>
+                                    <button class="comment-reply">Ответить</button>
+                                </div>
+                                
+                                {% if comment.replies.exists %}
+                                <div class="comment-replies">
+                                    {% for reply in comment.replies.all %}
+                                    <div class="reply">
+                                        <div class="comment-avatar">{{ reply.user.username|first }}</div>
+                                        <div class="comment-content">
+                                            <div class="comment-author">{{ reply.user.username }}</div>
+                                            <div class="comment-text">{{ reply.content }}</div>
+                                            <div class="comment-meta">{{ reply.created_at|naturaltime }}</div>
+                                            <div class="comment-actions">
+                                                <button class="comment-like">👍 <span>{{ reply.likes|default:"0" }}</span></button>
+                                                <button class="comment-dislike">👎</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
-                    </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="comment">
+                            <div class="comment-avatar">К</div>
+                            <div class="comment-content">
+                                <div class="comment-author">Комментатор</div>
+                                <div class="comment-text">Очень полезное видео! Спасибо за объяснение.</div>
+                                <div class="comment-meta">2 дня назад</div>
+                                <div class="comment-actions">
+                                    <button class="comment-like">👍 <span>24</span></button>
+                                    <button class="comment-dislike">👎</button>
+                                    <button class="comment-reply">Ответить</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -73,8 +138,157 @@
     </div>
 </div>
 
+<!-- Добавляем информационную панель о горячих клавишах -->
+<div class="keyboard-shortcuts-info">
+    <button class="shortcuts-toggle">⌨️ Показать горячие клавиши</button>
+    <div class="shortcuts-panel" style="display: none;">
+        <h3>Горячие клавиши</h3>
+        <ul>
+            <li><span class="key">Пробел</span> - Пауза/Воспроизведение</li>
+            <li><span class="key">→</span> - Перемотка вперед на 10 сек</li>
+            <li><span class="key">←</span> - Перемотка назад на 10 сек</li>
+            <li><span class="key">↑</span> - Увеличить громкость</li>
+            <li><span class="key">↓</span> - Уменьшить громкость</li>
+            <li><span class="key">F</span> - Полноэкранный режим</li>
+            <li><span class="key">M</span> - Отключение звука</li>
+            <li><span class="key">0-9</span> - Переход к % видео (0 = начало, 5 = 50%, 9 = 90%)</li>
+        </ul>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Инициализация нашего кастомного плеера
+        const player = new KronikPlayer('kronik-player', {
+            videoId: '{{ video.id }}',
+            showNextVideo: true,
+            nextVideoSelector: '.related-video-card:first-child',
+            nextTitleSelector: '.related-title',
+            nextChannelSelector: '.related-channel',
+            trackWatchProgress: true,
+            trackWatchComplete: true
+        });
+        
+        // Панель горячих клавиш
+        document.querySelector('.shortcuts-toggle').addEventListener('click', function() {
+            const panel = document.querySelector('.shortcuts-panel');
+            if (panel.style.display === 'none') {
+                panel.style.display = 'block';
+                this.textContent = '⌨️ Скрыть горячие клавиши';
+            } else {
+                panel.style.display = 'none';
+                this.textContent = '⌨️ Показать горячие клавиши';
+            }
+        });
+        
+        // Обработка лайков и дизлайков
+        const likeButton = document.getElementById('likeButton');
+        const dislikeButton = document.getElementById('dislikeButton');
+        const likeCount = document.getElementById('likeCount');
+        const dislikeCount = document.getElementById('dislikeCount');
+        
+        if (likeButton && dislikeButton) {
+            // Функция для проверки, поставлен ли лайк/дислайк пользователем
+            function loadReactions() {
+                const videoLikes = localStorage.getItem('kronik-video-likes') || '{}';
+                const videoLikesObj = JSON.parse(videoLikes);
+                
+                const videoId = '{{ video.id }}';
+                const reaction = videoLikesObj[videoId];
+                
+                // Сбрасываем состояние кнопок
+                likeButton.classList.remove('active');
+                dislikeButton.classList.remove('active');
+                
+                // Если пользователь уже реагировал, отмечаем активную кнопку
+                if (reaction === 'like') {
+                    likeButton.classList.add('active');
+                } else if (reaction === 'dislike') {
+                    dislikeButton.classList.add('active');
+                }
+            }
+            
+            // Загружаем состояние при загрузке страницы
+            loadReactions();
+            
+            // Обработчики нажатий
+            likeButton.addEventListener('click', function() {
+                if (!likeButton.classList.contains('active')) {
+                    // Добавляем лайк
+                    likeButton.classList.add('active');
+                    dislikeButton.classList.remove('active');
+                    
+                    // Увеличиваем счетчик
+                    let likes = parseInt(likeCount.textContent) || 0;
+                    likeCount.textContent = likes + 1;
+                    
+                    // Сохраняем реакцию
+                    saveReaction('like');
+                    
+                    // API запрос на сервер (в будущем)
+                    // sendReaction('like');
+                } else {
+                    // Убираем лайк
+                    likeButton.classList.remove('active');
+                    
+                    // Уменьшаем счетчик
+                    let likes = parseInt(likeCount.textContent) || 0;
+                    if (likes > 0) likeCount.textContent = likes - 1;
+                    
+                    // Удаляем реакцию
+                    removeReaction();
+                    
+                    // API запрос на сервер (в будущем)
+                    // removeReactionRequest();
+                }
+            });
+            
+            dislikeButton.addEventListener('click', function() {
+                if (!dislikeButton.classList.contains('active')) {
+                    // Добавляем дизлайк
+                    dislikeButton.classList.add('active');
+                    likeButton.classList.remove('active');
+                    
+                    // Сохраняем реакцию
+                    saveReaction('dislike');
+                    
+                    // API запрос на сервер (в будущем)
+                    // sendReaction('dislike');
+                } else {
+                    // Убираем дизлайк
+                    dislikeButton.classList.remove('active');
+                    
+                    // Удаляем реакцию
+                    removeReaction();
+                    
+                    // API запрос на сервер (в будущем)
+                    // removeReactionRequest();
+                }
+            });
+            
+            // Функция для сохранения реакции в localStorage
+            function saveReaction(reactionType) {
+                const videoLikes = localStorage.getItem('kronik-video-likes') || '{}';
+                const videoLikesObj = JSON.parse(videoLikes);
+                
+                const videoId = '{{ video.id }}';
+                videoLikesObj[videoId] = reactionType;
+                
+                localStorage.setItem('kronik-video-likes', JSON.stringify(videoLikesObj));
+            }
+            
+            // Функция для удаления реакции
+            function removeReaction() {
+                const videoLikes = localStorage.getItem('kronik-video-likes') || '{}';
+                const videoLikesObj = JSON.parse(videoLikes);
+                
+                const videoId = '{{ video.id }}';
+                delete videoLikesObj[videoId];
+                
+                localStorage.setItem('kronik-video-likes', JSON.stringify(videoLikesObj));
+            }
+        }
+        
         // Получаем текущий ID видео из URL
         const currentPath = window.location.pathname;
         const currentVideoId = parseInt(currentPath.split('/').filter(Boolean)[1]);

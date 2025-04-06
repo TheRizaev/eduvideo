@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import UserProfile
+from .models import UserProfile, ExpertiseArea
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -25,3 +25,20 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['bio', 'profile_picture']
+        
+class AuthorApplicationForm(forms.ModelForm):
+    expertise_areas = forms.ModelMultipleChoiceField(
+        queryset=ExpertiseArea.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+    
+    class Meta:
+        model = UserProfile
+        fields = ['credentials', 'expertise_areas']
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['credentials'].widget.attrs.update({
+            'placeholder': 'Расскажите о своем образовании, опыте, сертификатах и почему вы хотите стать автором'
+        })

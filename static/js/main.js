@@ -535,3 +535,47 @@ document.addEventListener('DOMContentLoaded', function() {
     setupCategories();
     setupSidebarMenuItems()
 });
+
+function setupThemeToggle() {
+    const themeToggle = document.querySelector('.theme-toggle');
+    const body = document.body;
+    const themeTransition = document.querySelector('.theme-transition');
+    const toggleText = document.querySelector('.toggle-text');
+    
+    if (!themeToggle || !themeTransition || !toggleText) return;
+    
+    // Загружаем сохраненную тему при загрузке страницы
+    const savedTheme = localStorage.getItem('kronik-theme');
+    if (savedTheme) {
+        if (savedTheme === 'light') {
+            body.classList.remove('dark-theme');
+            body.classList.add('light-theme');
+            toggleText.textContent = 'Темная тема';
+        } else {
+            body.classList.remove('light-theme');
+            body.classList.add('dark-theme');
+            toggleText.textContent = 'Светлая тема';
+        }
+    }
+    
+    themeToggle.addEventListener('click', function() {
+        const isDark = body.classList.contains('dark-theme');
+        themeTransition.className = `theme-transition ${isDark ? 'light' : 'dark'} animating`;
+        
+        setTimeout(() => {
+            body.classList.toggle('dark-theme');
+            body.classList.toggle('light-theme');
+            
+            // Обновляем текст кнопки
+            const newTheme = body.classList.contains('light-theme') ? 'light' : 'dark';
+            toggleText.textContent = newTheme === 'light' ? 'Темная тема' : 'Светлая тема';
+            
+            // Сохраняем выбранную тему в localStorage
+            localStorage.setItem('kronik-theme', newTheme);
+        }, 500);
+        
+        setTimeout(() => {
+            themeTransition.classList.remove('animating');
+        }, 1500);
+    });
+}
