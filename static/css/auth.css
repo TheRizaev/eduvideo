@@ -90,7 +90,7 @@
 }
 
 .auth-button:hover {
-    background-color: #89bc00;
+    background-color: #00d9c0;
 }
 
 .auth-links {
@@ -243,7 +243,7 @@
 }
 
 .profile-save-button:hover {
-    background-color: #89bc00;
+    background-color: #00d9c0;
 }
 
 .profile-courses, .profile-history {
@@ -286,7 +286,7 @@
 }
 
 .register-button:hover {
-    background-color: #89bc00;
+    background-color: #00d9c0;
 }
 
 /* Responsive */

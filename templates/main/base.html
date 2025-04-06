@@ -7,13 +7,17 @@
     <title>{% block title %}ЭдуВидео{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <!-- Add studio.css if we're on the studio page -->
+    {% if request.path == '/studio/' %}
+    <link rel="stylesheet" href="{% static 'css/studio.css' %}">
+    {% endif %}
 </head>
 <body class="dark-theme">
     <div class="theme-transition dark"></div>
     
     <header>
         <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
-        <div class="logo">Эду<span>Видео</span></div>
+        <div class="logo">KRONIK</div>
         <div class="search-container">
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Поиск...">
@@ -44,6 +48,10 @@
                         <div class="dropdown-item" onclick="window.location.href='{% url 'profile' %}'">
                             <div class="icon">👤</div>
                             <div>Мой профиль</div>
+                        </div>
+                        <div class="dropdown-item" onclick="window.location.href='{% url 'studio' %}'">
+                            <div class="icon">🎬</div>
+                            <div>Студия</div>
                         </div>
                         <div class="dropdown-item">
                             <div class="icon">⚙️</div>
@@ -84,7 +92,7 @@
     
     <div class="main-container">
         <div class="sidebar" id="sidebar">
-            <div class="menu-item active">
+            <div class="menu-item {% if request.path == '/' %}active{% endif %}" onclick="window.location.href='{% url 'index' %}'">
                 <div class="menu-icon">🏠</div>
                 <div class="menu-text">Главная</div>
             </div>
@@ -104,6 +112,13 @@
                 <div class="menu-icon">✓</div>
                 <div class="menu-text">Подписки</div>
             </div>
+            
+            {% if user.is_authenticated %}
+            <div class="menu-item {% if request.path == '/studio/' %}active{% endif %}" onclick="window.location.href='{% url 'studio' %}'">
+                <div class="menu-icon">🎬</div>
+                <div class="menu-text">Студия</div>
+            </div>
+            {% endif %}
             
             <div class="sidebar-section">
                 <div class="sidebar-title">ОБРАЗОВАНИЕ</div>

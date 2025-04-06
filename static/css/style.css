@@ -21,6 +21,9 @@
 /* Video detail page */
 @import url('video-detail.css');
 
+/* Studio */
+@import url('studio.css');
+
 /* Responsive styles */
 @import url('responsive.css');
 

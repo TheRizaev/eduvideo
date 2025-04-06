@@ -406,6 +406,25 @@ function setupSidebar() {
     });
 }
 
+// Function to make sidebar menu items active when clicked
+function setupSidebarMenuItems() {
+    const menuItems = document.querySelectorAll('.sidebar .menu-item');
+    
+    if (!menuItems.length) return;
+    
+    menuItems.forEach(item => {
+        // Skip items that already have onclick handlers (like Studio and Home)
+        if (item.getAttribute('onclick')) return;
+        
+        item.addEventListener('click', function() {
+            // Remove active class from all items
+            menuItems.forEach(i => i.classList.remove('active'));
+            // Add active class to clicked item
+            this.classList.add('active');
+        });
+    });
+}
+
 // Функция для настройки переключения темы
 function setupThemeToggle() {
     const themeToggle = document.querySelector('.theme-toggle');
@@ -514,4 +533,5 @@ document.addEventListener('DOMContentLoaded', function() {
     setupUserMenu();
     setupMobileMenu();
     setupCategories();
+    setupSidebarMenuItems()
 });

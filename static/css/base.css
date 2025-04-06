@@ -1,12 +1,12 @@
 /* Base styles and variables */
 :root {
-    --primary-color: #6ccff6;
-    --dark-bg: #001011;
-    --gray-color: #787780;
+    --primary-color: #9f2558;
+    --dark-bg: #110108;
+    --gray-color: #7a6563;
     --light-bg: #fffffc;
-    --accent-color: #98ce00;
+    --accent-color: #9f2558  ;
     --text-light: #fffffc;
-    --text-dark: #001011;
+    --text-dark: #110008;
 }
 
 /* Основные стили */
@@ -42,7 +42,7 @@ body.dark-theme {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #7ba700;
+    background: #00D9C0 ;
 }
 
 /* Theme Transition Animation */

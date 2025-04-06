@@ -1,0 +1,208 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Студия - ЭдуВидео{% endblock %}
+
+{% block content %}
+<div class="studio-container">
+    <div class="studio-header">
+        <h1>Студия ЭдуВидео</h1>
+        <button class="upload-button">
+            <span class="upload-icon">📤</span>
+            <span>Загрузить</span>
+        </button>
+    </div>
+
+    <div class="studio-tabs">
+        <div class="tab active" data-tab="videos">Видео</div>
+        <div class="tab" data-tab="analytics">Аналитика</div>
+        <div class="tab" data-tab="comments">Комментарии</div>
+        <div class="tab" data-tab="monetization">Монетизация</div>
+        <div class="tab" data-tab="customization">Настройка</div>
+    </div>
+
+    <div class="tab-content" id="videos-content">
+        <div class="studio-filter">
+            <div class="filter-group">
+                <input type="text" placeholder="Поиск по видео..." class="search-input">
+                <button class="search-button">🔍</button>
+            </div>
+            <div class="filter-group">
+                <select class="filter-select">
+                    <option>Все видео</option>
+                    <option>Опубликованные</option>
+                    <option>Черновики</option>
+                    <option>Архивные</option>
+                </select>
+                <select class="filter-select">
+                    <option>Сортировка по дате (новые)</option>
+                    <option>Сортировка по дате (старые)</option>
+                    <option>Сортировка по просмотрам</option>
+                    <option>Сортировка по оценкам</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="studio-videos-list">
+            {% if videos %}
+                {% for video in videos %}
+                <div class="studio-video-item">
+                    <div class="video-thumbnail">
+                        {% if video.thumbnail %}
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">
+                        {% else %}
+                            <div class="placeholder-thumbnail">📹</div>
+                        {% endif %}
+                        <span class="video-duration">{{ video.duration }}</span>
+                    </div>
+                    <div class="video-details">
+                        <h3 class="video-title">{{ video.title }}</h3>
+                        <div class="video-meta">
+                            {{ video.views }} просмотров • {{ video.upload_date|date:"d.m.Y" }}
+                        </div>
+                        <div class="video-category">
+                            Категория: {{ video.category|default:"Без категории" }}
+                        </div>
+                    </div>
+                    <div class="video-actions">
+                        <button class="action-btn edit-btn">✏️ Редактировать</button>
+                        <button class="action-btn stats-btn">📊 Статистика</button>
+                        <button class="action-btn delete-btn">🗑️ Удалить</button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-videos">
+                    <div class="empty-state">
+                        <div class="empty-icon">📹</div>
+                        <h3>У вас пока нет загруженных видео</h3>
+                        <p>Загрузите свое первое видео, чтобы начать делиться знаниями</p>
+                        <button class="upload-button">Загрузить видео</button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="tab-content hidden" id="analytics-content">
+        <div class="analytics-dashboard">
+            <h2>Аналитика канала</h2>
+            <div class="analytics-overview">
+                <div class="analytics-card">
+                    <div class="analytics-title">Просмотры</div>
+                    <div class="analytics-value">0</div>
+                    <div class="analytics-change positive">+0% за 28 дней</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-title">Время просмотра (часы)</div>
+                    <div class="analytics-value">0</div>
+                    <div class="analytics-change positive">+0% за 28 дней</div>
+                </div>
+                <div class="analytics-card">
+                    <div class="analytics-title">Подписчики</div>
+                    <div class="analytics-value">0</div>
+                    <div class="analytics-change positive">+0 за 28 дней</div>
+                </div>
+            </div>
+            <div class="analytics-chart-container">
+                <div class="chart-placeholder">
+                    <p>Здесь будет отображаться график активности после загрузки видео</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content hidden" id="comments-content">
+        <div class="comments-dashboard">
+            <h2>Управление комментариями</h2>
+            <p class="empty-comments">У вас пока нет комментариев к видео.</p>
+        </div>
+    </div>
+
+    <div class="tab-content hidden" id="monetization-content">
+        <div class="monetization-dashboard">
+            <h2>Монетизация</h2>
+            <div class="monetization-status">
+                <div class="status-icon">🔒</div>
+                <div class="status-details">
+                    <h3>Монетизация недоступна</h3>
+                    <p>Для включения монетизации необходимо:</p>
+                    <ul>
+                        <li>Иметь не менее 1000 подписчиков</li>
+                        <li>Набрать 4000 часов просмотра за последние 12 месяцев</li>
+                        <li>Соблюдать правила сообщества</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content hidden" id="customization-content">
+        <div class="customization-dashboard">
+            <h2>Настройка канала</h2>
+            <form class="channel-settings-form">
+                <div class="settings-group">
+                    <label>Название канала</label>
+                    <input type="text" placeholder="Введите название канала" value="{{ user.username }}" class="settings-input">
+                </div>
+                <div class="settings-group">
+                    <label>Описание канала</label>
+                    <textarea placeholder="Расскажите о своем канале" class="settings-textarea">{{ user.profile.bio }}</textarea>
+                </div>
+                <div class="settings-group">
+                    <label>Изображение канала</label>
+                    <div class="avatar-upload">
+                        <div class="avatar-preview">
+                            {% if user.profile.profile_picture %}
+                                <img src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }}">
+                            {% else %}
+                                <div class="avatar-placeholder">{{ user.username|first }}</div>
+                            {% endif %}
+                        </div>
+                        <button type="button" class="upload-avatar-btn">Изменить</button>
+                    </div>
+                </div>
+                <button type="submit" class="save-settings-btn">Сохранить изменения</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.tab');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all tab content
+                const allContent = document.querySelectorAll('.tab-content');
+                allContent.forEach(content => content.classList.add('hidden'));
+                
+                // Show selected tab content
+                const tabName = this.getAttribute('data-tab');
+                const selectedContent = document.getElementById(`${tabName}-content`);
+                if (selectedContent) {
+                    selectedContent.classList.remove('hidden');
+                }
+            });
+        });
+        
+        // Upload button functionality
+        const uploadButtons = document.querySelectorAll('.upload-button');
+        uploadButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Функционал загрузки видео будет доступен в следующем обновлении');
+            });
+        });
+    });
+</script>
+{% endblock %}

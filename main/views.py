@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from .models import Video, Category
 import random
@@ -7,6 +8,8 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm
+from django.core.paginator import Paginator
+
 def index(request):
     categories = Category.objects.all()
     return render(request, 'main/index.html', {'categories': categories})
@@ -381,3 +384,20 @@ def profile_view(request):
         form = UserProfileForm(instance=request.user.profile)
     
     return render(request, 'accounts/profile.html', {'form': form})
+
+@login_required
+def studio_view(request):
+    """
+    View for the creator studio page.
+    Only authenticated users can access this page.
+    """
+    # Get videos uploaded by the current user
+    # In a real project, you would filter videos by user
+    # videos = Video.objects.filter(user=request.user).order_by('-upload_date')
+    
+    # For demonstration, we'll use empty data now
+    videos = []
+    
+    return render(request, 'studio/studio.html', {
+        'videos': videos
+    })
