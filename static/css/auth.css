@@ -5,18 +5,20 @@
     align-items: center;
     min-height: calc(100vh - 150px);
     padding: 20px;
+    box-sizing: border-box; /* Учитываем padding в размерах */
 }
 
 .auth-form-container {
     width: 100%;
     max-width: 450px;
-    padding: 30px;
+    padding: 30px 40px; /* Увеличиваем отступы по бокам с 30px до 40px */
     border-radius: 15px;
     background-color: rgba(255, 255, 255, 0.7);
     box-shadow: 0 8px 32px rgba(159, 37, 88, 0.15);
     backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
+    margin: 0 auto; /* Центрируем форму */
 }
 
 .auth-form-container::before,
@@ -78,6 +80,7 @@
 .form-group {
     margin-bottom: 25px;
     position: relative;
+    width: 100%;
 }
 
 .form-group label {
@@ -87,7 +90,9 @@
     color: var(--primary-color);
 }
 
-.form-group input {
+.form-group input, 
+.form-group textarea, 
+.form-group select {
     width: 100%;
     padding: 12px 15px;
     border-radius: 8px;
@@ -96,6 +101,7 @@
     font-size: 16px;
     color: inherit;
     transition: all 0.3s;
+    box-sizing: border-box; /* Важно: чтобы padding не увеличивал ширину */
 }
 
 .dark-theme .form-group input {
@@ -116,6 +122,7 @@
 }
 
 .auth-button {
+    width: 100%;
     padding: 12px 20px;
     background-color: var(--accent-color);
     color: white;
@@ -125,8 +132,9 @@
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
-    margin-top: 10px;
+    margin-top: 15px;
     box-shadow: 0 5px 15px rgba(159, 37, 88, 0.3);
+    box-sizing: border-box; /* Важно: чтобы padding не увеличивал ширину */
 }
 
 .auth-button:hover {
@@ -601,5 +609,23 @@
     .auth-buttons {
         flex-direction: column;
         gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-form-container {
+        padding: 25px 20px; /* Уменьшаем отступы на мобильных */
+    }
+    
+    .form-group input, 
+    .form-group textarea, 
+    .form-group select {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .auth-button {
+        padding: 10px 15px;
+        font-size: 14px;
     }
 }

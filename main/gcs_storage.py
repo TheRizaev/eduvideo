@@ -2,19 +2,45 @@ from google.cloud import storage
 import os
 import json
 from datetime import datetime
-import io
+from django.conf import settings
 
-# Укажи путь к JSON-ключу
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "eduvideo-455814-7e26d2c1a77e.json"
+def get_credentials_path():
+    """Возвращает путь к файлу с учетными данными Google Cloud Storage"""
+    # Ищем файл сначала в корне проекта, затем в папке приложения main
+    root_file_path = os.path.join(settings.BASE_DIR, "kronik-26102005-6949b1ae3add.json")
+    app_file_path = os.path.join(settings.BASE_DIR, "main", "kronik-26102005-6949b1ae3add.json")
+    
+    if os.path.exists(root_file_path):
+        return root_file_path
+    elif os.path.exists(app_file_path):
+        return app_file_path
+    else:
+        raise FileNotFoundError("Файл учетных данных GCS не найден")
 
-# Имя бакета
-BUCKET_NAME = "video-portal-storage"
+def init_gcs_client():
+    """Инициализирует клиент Google Cloud Storage с найденными учетными данными"""
+    try:
+        # Устанавливаем переменную окружения с путем к файлу учетных данных
+        credentials_path = get_credentials_path()
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+        
+        # Инициализируем клиент
+        from google.cloud import storage
+        client = storage.Client()
+        return client
+    except Exception as e:
+        print(f"Ошибка при инициализации клиента GCS: {e}")
+        return None
+    
+BUCKET_NAME = "kronik-portage"
 
 def create_bucket(bucket_name=BUCKET_NAME, storage_class="STANDARD", location="US"):
     """Создаёт бакет в Google Cloud Storage"""
     try:
-        # Инициализируем клиент
-        client = storage.Client()
+        # Инициализируем клиент с учетом нового пути к учетным данным
+        client = init_gcs_client()
+        if not client:
+            raise Exception("Не удалось инициализировать клиент GCS")
 
         # Проверяем, существует ли бакет
         if client.bucket(bucket_name).exists():

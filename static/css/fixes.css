@@ -68,3 +68,100 @@
 .action-button:hover {
     background-color: rgba(159, 37, 88, 0.2);
 }
+
+/* Исправления для светлой темы в video-grid */
+.light-theme .videos-grid .video-card .video-title {
+    color: var(--text-dark) !important; /* Принудительно используем темный цвет текста */
+}
+
+.light-theme .videos-grid {
+    background-color: var(--light-bg);
+}
+
+.light-theme .content {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+}
+
+/* Исправления для video-page-layout при светлой теме */
+.light-theme .video-page-layout {
+    background-color: var(--light-bg);
+}
+
+.light-theme .video-details h1,
+.light-theme .channel-name,
+.light-theme .comments-section h2,
+.light-theme .comment-author,
+.light-theme .related-title {
+    color: var(--text-dark) !important;
+}
+
+.light-theme .video-description,
+.light-theme .comment-text {
+    color: var(--text-dark);
+}
+
+/* Исправления для стилей категорий */
+.expertise-areas-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    max-height: 300px; /* Увеличиваем для лучшего отображения */
+    overflow-y: auto;
+    border: 2px solid rgba(159, 37, 88, 0.2);
+}
+
+.expertise-areas-container label {
+    display: flex;
+    align-items: center;
+    font-weight: normal;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: color 0.3s;
+    padding: 5px 0;
+}
+
+.expertise-areas-container label:hover {
+    color: var(--accent-color);
+}
+
+.expertise-areas-container input[type="checkbox"] {
+    margin-right: 8px;
+    width: auto !important;
+    height: auto !important;
+    cursor: pointer;
+    opacity: 1 !important;
+    position: relative !important;
+}
+
+/* Исправления для drag and drop области загрузки файлов */
+.file-input-container {
+    position: relative;
+    padding: 40px 30px;
+    border: 2px dashed rgba(159, 37, 88, 0.3);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: rgba(159, 37, 88, 0.05);
+}
+
+.file-input-container:hover,
+.file-input-container.highlight {
+    border-color: var(--accent-color);
+    background-color: rgba(159, 37, 88, 0.1);
+    box-shadow: 0 0 0 3px rgba(159, 37, 88, 0.1);
+}
+
+/* Исправления для видеоплеера */
+.video-js {
+    background-color: #000 !important;
+}
+
+.light-theme .video-js {
+    color: #000;
+}

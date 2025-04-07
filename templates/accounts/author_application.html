@@ -78,11 +78,17 @@
             <div class="form-group">
                 <label>Выберите области экспертизы <span class="required">*</span></label>
                 <div class="expertise-areas-container">
-                    {{ form.expertise_areas }}
+                    {% for choice in form.expertise_areas %}
+                        <label>
+                            {{ choice.tag }}
+                            {{ choice.choice_label }}
+                        </label>
+                    {% endfor %}
                 </div>
                 {% if form.expertise_areas.errors %}
                     <div class="form-error">{{ form.expertise_areas.errors }}</div>
                 {% endif %}
+                <small class="form-help">Выберите одну или несколько областей, в которых вы являетесь экспертом.</small>
             </div>
             
             <div class="form-actions">
@@ -102,6 +108,7 @@
         const form = document.getElementById('author-application-form');
         const credentialsField = document.getElementById('id_credentials');
         
+        // Улучшенная валидация формы
         form.addEventListener('submit', function(e) {
             let isValid = true;
             
@@ -191,6 +198,15 @@
                     }
                 }
             });
+        });
+        
+        // Делаем чекбоксы более заметными
+        document.querySelectorAll('.expertise-areas-container input[type="checkbox"]').forEach(checkbox => {
+            checkbox.style.opacity = '1';
+            checkbox.style.position = 'relative';
+            checkbox.style.width = 'auto';
+            checkbox.style.height = 'auto';
+            checkbox.style.margin = '0 8px 0 0';
         });
     });
 </script>

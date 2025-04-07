@@ -22,7 +22,8 @@
 @import url('video-detail.css');
 
 /* Video player */
-@import url('video-player.css');
+/* @import url('video-player.css'); */
+@import url('kronik-player.css');
 
 /* Video components (player overlays, comments, shortcuts panel) */
 @import url('video-components.css');

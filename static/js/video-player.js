@@ -1,22 +1,24 @@
 /*!
  * KRONIK Video Player - Custom VideoJS Implementation
- * Version 1.0
+ * Version 1.2
  */
 
-// Убеждаемся, что переменная KronikPlayer не объявлена ранее
-if (typeof KronikPlayer === 'undefined') {
-    // Определяем класс KronikPlayer в глобальной области видимости
-    window.KronikPlayer = class KronikPlayer {
-        constructor(elementId, options = {}) {
-            this.playerElementId = elementId;
-            this.options = options;
-            this.player = null;
-            this.videoId = options.videoId || 'video-' + Math.random().toString(36).substr(2, 9);
-            this.saveTimeInterval = null;
-            
-            // Инициализация
-            this.initPlayer();
-        }
+// Глобальный объект KronikPlayer
+class KronikPlayer {
+    constructor(elementId, options = {}) {
+        console.log("Создание экземпляра KronikPlayer...");
+        this.playerElementId = elementId;
+        this.options = options;
+        this.player = null;
+        this.videoId = options.videoId || 'video-' + Math.random().toString(36).substr(2, 9);
+        this.saveTimeInterval = null;
+        
+        // Инициализация
+        this.initPlayer();
+    }
+    
+    initPlayer() {
+        console.log("Метод initPlayer вызван...");
         // Базовые опции плеера
         const defaultOptions = {
             responsive: true,
@@ -42,28 +44,39 @@ if (typeof KronikPlayer === 'undefined') {
         
         // Инициализация видеоплеера
         if (typeof videojs !== 'undefined') {
-            this.player = videojs(this.playerElementId, playerOptions);
-            
-            // Настройка отслеживания просмотра
-            this.setupWatchTracking();
-            
-            // Настройка горячих клавиш
-            this.setupKeyboardShortcuts();
-            
-            // Запоминание последней позиции воспроизведения
-            this.setupResumeFeature();
-            
-            // Настройка автовоспроизведения следующего видео
-            this.setupNextVideoFeature();
+            console.log("VideoJS определен, инициализируем плеер...");
+            try {
+                this.player = videojs(this.playerElementId, playerOptions);
+                console.log("Плеер VideoJS успешно создан!");
+                
+                // Настройка отслеживания просмотра
+                this.setupWatchTracking();
+                
+                // Настройка горячих клавиш
+                this.setupKeyboardShortcuts();
+                
+                // Запоминание последней позиции воспроизведения
+                this.setupResumeFeature();
+                
+                // Настройка автовоспроизведения следующего видео
+                this.setupNextVideoFeature();
+            } catch (error) {
+                console.error("Ошибка при создании плеера VideoJS:", error);
+            }
         } else {
-            console.error('VideoJS не найден. Проверьте, что библиотека загружена.');
+            console.error('VideoJS не найден! Проверьте, что библиотека загружена.');
         }
     }
     
     setupResumeFeature() {
-        if (!this.player) return;
+        console.log("Настройка функции восстановления просмотра...");
+        if (!this.player) {
+            console.error("Плеер не инициализирован в setupResumeFeature");
+            return;
+        }
         
         const savedTime = localStorage.getItem(`kronik-video-time-${this.videoId}`);
+        console.log(`Сохраненная позиция для видео ${this.videoId}: ${savedTime}`);
         
         if (savedTime && parseFloat(savedTime) > 0) {
             // Создаем диалог для продолжения просмотра
@@ -115,7 +128,11 @@ if (typeof KronikPlayer === 'undefined') {
     }
     
     setupWatchTracking() {
-        if (!this.player) return;
+        console.log("Настройка отслеживания просмотра...");
+        if (!this.player) {
+            console.error("Плеер не инициализирован в setupWatchTracking");
+            return;
+        }
         
         let videoWatched = false;
         let watchPercentage = 0;
@@ -157,6 +174,7 @@ if (typeof KronikPlayer === 'undefined') {
         
         // При окончании видео
         this.player.on('ended', () => {
+            console.log("Видео закончилось");
             videoWatched = true;
             localStorage.removeItem(`kronik-video-time-${this.videoId}`);
             
@@ -167,7 +185,11 @@ if (typeof KronikPlayer === 'undefined') {
     }
     
     setupKeyboardShortcuts() {
-        if (!this.player) return;
+        console.log("Настройка клавиатурных сокращений...");
+        if (!this.player) {
+            console.error("Плеер не инициализирован в setupKeyboardShortcuts");
+            return;
+        }
         
         const handleKeyDown = (event) => {
             // Если фокус на элементе ввода, игнорируем
@@ -241,14 +263,20 @@ if (typeof KronikPlayer === 'undefined') {
     }
     
     setupNextVideoFeature() {
-        if (!this.player) return;
+        console.log("Настройка функции следующего видео...");
+        if (!this.player) {
+            console.error("Плеер не инициализирован в setupNextVideoFeature");
+            return;
+        }
         
         // Настраиваем только если задан колбэк или селектор следующего видео
         if (!this.options.nextVideoSelector && !this.options.onNextVideo) {
+            console.log("Следующее видео не настроено: нет селектора или колбэка");
             return;
         }
         
         this.player.on('ended', () => {
+            console.log("Видео закончилось, показываем рекомендацию следующего видео");
             // Если задан колбэк, используем его
             if (typeof this.options.onNextVideo === 'function') {
                 this.options.onNextVideo();
@@ -257,20 +285,30 @@ if (typeof KronikPlayer === 'undefined') {
             
             // Иначе ищем следующее видео по селектору
             const nextVideoElement = document.querySelector(this.options.nextVideoSelector);
-            if (!nextVideoElement) return;
+            if (!nextVideoElement) {
+                console.log("Селектор следующего видео не найден:", this.options.nextVideoSelector);
+                return;
+            }
             
             this.showNextVideoRecommendation(nextVideoElement);
         });
     }
     
     showNextVideoRecommendation(nextElement) {
-        if (!this.player) return;
+        console.log("Показываем рекомендацию следующего видео...");
+        if (!this.player) {
+            console.error("Плеер не инициализирован в showNextVideoRecommendation");
+            return;
+        }
         
         if (!nextElement && this.options.nextVideoSelector) {
             nextElement = document.querySelector(this.options.nextVideoSelector);
         }
         
-        if (!nextElement) return;
+        if (!nextElement) {
+            console.log("Элемент следующего видео не найден");
+            return;
+        }
         
         // Получаем данные для следующего видео
         let nextVideoLink, nextThumbnail, nextTitle, nextChannel;
@@ -286,13 +324,36 @@ if (typeof KronikPlayer === 'undefined') {
             nextVideoLink = nextElement.getAttribute('href');
         }
         
+        // Если не нашли ссылку, но можем извлечь ID из класса или атрибутов
+        if (!nextVideoLink) {
+            const videoIdMatch = nextElement.className.match(/video-(\d+)/);
+            if (videoIdMatch) {
+                nextVideoLink = `/video/${videoIdMatch[1]}/`;
+            }
+        }
+        
+        // Если все еще не нашли ссылку, пробуем получить первое видео из рекомендуемых
+        if (!nextVideoLink && window.videoData && window.videoData.length > 0) {
+            const randomIndex = Math.floor(Math.random() * Math.min(5, window.videoData.length));
+            nextVideoLink = `/video/${window.videoData[randomIndex].id}/`;
+            nextTitle = window.videoData[randomIndex].title;
+            nextChannel = window.videoData[randomIndex].channel;
+        }
+        
         // Если не нашли ссылку, не показываем рекомендацию
-        if (!nextVideoLink) return;
+        if (!nextVideoLink) {
+            console.log("Не удалось получить ссылку на следующее видео");
+            return;
+        }
         
         // Получаем данные из элемента
-        nextThumbnail = nextElement.querySelector('img')?.outerHTML || '';
-        nextTitle = nextElement.querySelector(this.options.nextTitleSelector || '.related-title')?.textContent || 'Следующее видео';
-        nextChannel = nextElement.querySelector(this.options.nextChannelSelector || '.related-channel')?.textContent || '';
+        if (!nextTitle) {
+            nextThumbnail = nextElement.querySelector('img')?.outerHTML || '';
+            nextTitle = nextElement.querySelector(this.options.nextTitleSelector || '.related-title')?.textContent || 'Следующее видео';
+            nextChannel = nextElement.querySelector(this.options.nextChannelSelector || '.related-channel')?.textContent || '';
+        }
+        
+        console.log("Данные для следующего видео:", { nextVideoLink, nextTitle, nextChannel });
         
         // Создаем и отображаем элемент с рекомендацией
         const nextOverlay = document.createElement('div');
@@ -300,7 +361,7 @@ if (typeof KronikPlayer === 'undefined') {
         nextOverlay.innerHTML = `
             <div class="next-container">
                 <div class="next-message">Следующее видео через <span class="countdown">10</span></div>
-                <div class="next-thumbnail">${nextThumbnail}</div>
+                <div class="next-thumbnail">${nextThumbnail || '<div style="background-color:#9f2558;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:48px;">🐰</div>'}</div>
                 <div class="next-info">
                     <div class="next-title">${nextTitle}</div>
                     ${nextChannel ? `<div class="next-channel">${nextChannel}</div>` : ''}
