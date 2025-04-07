@@ -1,0 +1,70 @@
+/* Общие исправления для макета */
+
+/* Убедимся, что основной контейнер страницы видео использует правильные цвета */
+.content {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+}
+
+/* Исправление для видимости блоков на странице видео */
+.video-page-layout > * {
+    display: block !important;
+}
+
+/* Фиксация рекомендованных видео для мобильных устройств */
+@media (max-width: 1200px) {
+    .related-videos {
+        width: 100%;
+    }
+    
+    .related-videos-list {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+    }
+}
+
+/* Фиксация для модальных окон видеоплеера */
+.vjs-resume-overlay,
+.vjs-next-overlay {
+    z-index: 50 !important;
+    display: flex !important;
+}
+
+/* Улучшение видимости заголовков */
+.video-details h1 {
+    color: white !important; /* Принудительно белый цвет для заголовка видео */
+    font-size: 1.8rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+/* Исправление для элементов управления видеоплеера */
+.vjs-control-bar {
+    background-color: rgba(17, 1, 8, 0.8) !important;
+}
+
+/* Исправляем выравнивание для sidebar если он конфликтует с содержимым */
+.main-container {
+    align-items: flex-start;
+}
+
+/* Исправления для рекомендованных видео */
+.related-title {
+    color: white !important;
+}
+
+.related-channel {
+    color: var(--gray-color) !important;
+}
+
+/* Исправления для кнопок действий */
+.action-button {
+    background-color: rgba(159, 37, 88, 0.1);
+    border-radius: 20px;
+    padding: 8px 15px;
+}
+
+.action-button:hover {
+    background-color: rgba(159, 37, 88, 0.2);
+}

@@ -1,36 +1,29 @@
 /*!
  * KRONIK Video Player - Custom VideoJS Implementation
  * Version 1.0
- * 
- * Features:
- * - Multiple quality options
- * - Playback speed control
- * - Keyboard shortcuts
- * - Resume viewing
- * - Next video recommendations
- * - Viewing statistics
- * - Picture-in-Picture
- * - Custom theme that adapts to site theme
  */
 
-window.KronikPlayer = class KronikPlayer {
-    constructor(elementId, options = {}) {
-        this.playerElementId = elementId;
-        this.options = options;
-        this.player = null;
-        this.videoId = options.videoId || 'video-' + Math.random().toString(36).substr(2, 9);
-        this.saveTimeInterval = null;
-        
-        // Инициализация
-        this.initPlayer();
-    }
-    
-    initPlayer() {
+// Убеждаемся, что переменная KronikPlayer не объявлена ранее
+if (typeof KronikPlayer === 'undefined') {
+    // Определяем класс KronikPlayer в глобальной области видимости
+    window.KronikPlayer = class KronikPlayer {
+        constructor(elementId, options = {}) {
+            this.playerElementId = elementId;
+            this.options = options;
+            this.player = null;
+            this.videoId = options.videoId || 'video-' + Math.random().toString(36).substr(2, 9);
+            this.saveTimeInterval = null;
+            
+            // Инициализация
+            this.initPlayer();
+        }
         // Базовые опции плеера
         const defaultOptions = {
             responsive: true,
             fluid: true,
             playbackRates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
+            controls: true,
+            preload: 'auto',
             controlBar: {
                 children: [
                     'playToggle',
@@ -39,49 +32,41 @@ window.KronikPlayer = class KronikPlayer {
                     'timeDivider',
                     'durationDisplay',
                     'progressControl',
-                    'playbackRateMenuButton',
-                    'qualitySelector',
-                    'pictureInPictureToggle',
                     'fullscreenToggle'
                 ]
-            },
-            plugins: {
-                httpSourceSelector: {
-                    default: 'auto'
-                }
             }
         };
-
-        javascriptCopy// Продолжение файла static/js/video-player.js
 
         // Объединяем пользовательские опции с дефолтными
         const playerOptions = { ...defaultOptions, ...this.options };
         
         // Инициализация видеоплеера
-        this.player = videojs(this.playerElementId, playerOptions);
-        
-        // Активация плагинов
-        this.player.qualityLevels();
-        this.player.httpSourceSelector();
-        
-        // Запоминание последней позиции воспроизведения
-        this.setupResumeFeature();
-        
-        // Настройка отслеживания просмотра
-        this.setupWatchTracking();
-        
-        // Настройка горячих клавиш
-        this.setupKeyboardShortcuts();
-        
-        // Настройка автовоспроизведения следующего видео
-        this.setupNextVideoFeature();
+        if (typeof videojs !== 'undefined') {
+            this.player = videojs(this.playerElementId, playerOptions);
+            
+            // Настройка отслеживания просмотра
+            this.setupWatchTracking();
+            
+            // Настройка горячих клавиш
+            this.setupKeyboardShortcuts();
+            
+            // Запоминание последней позиции воспроизведения
+            this.setupResumeFeature();
+            
+            // Настройка автовоспроизведения следующего видео
+            this.setupNextVideoFeature();
+        } else {
+            console.error('VideoJS не найден. Проверьте, что библиотека загружена.');
+        }
     }
     
     setupResumeFeature() {
+        if (!this.player) return;
+        
         const savedTime = localStorage.getItem(`kronik-video-time-${this.videoId}`);
         
-        if (savedTime && parseFloat(savedTime) > 0 && parseFloat(savedTime) < this.player.duration() * 0.95) {
-            // Показать диалог для продолжения просмотра
+        if (savedTime && parseFloat(savedTime) > 0) {
+            // Создаем диалог для продолжения просмотра
             const resumeElement = document.createElement('div');
             resumeElement.className = 'vjs-resume-overlay';
             resumeElement.innerHTML = `
@@ -110,7 +95,7 @@ window.KronikPlayer = class KronikPlayer {
             
             // Автоматически скрыть через 10 секунд если нет действий
             setTimeout(() => {
-                if (this.player.el().contains(resumeElement)) {
+                if (resumeElement.parentNode) {
                     resumeElement.remove();
                 }
             }, 10000);
@@ -118,7 +103,7 @@ window.KronikPlayer = class KronikPlayer {
         
         // Сохраняем позицию просмотра каждые 5 секунд
         this.saveTimeInterval = setInterval(() => {
-            if (!this.player.paused() && this.player.currentTime() > 0) {
+            if (this.player && !this.player.paused() && this.player.currentTime() > 0) {
                 localStorage.setItem(`kronik-video-time-${this.videoId}`, this.player.currentTime());
             }
         }, 5000);
@@ -130,6 +115,8 @@ window.KronikPlayer = class KronikPlayer {
     }
     
     setupWatchTracking() {
+        if (!this.player) return;
+        
         let videoWatched = false;
         let watchPercentage = 0;
         let lastUpdateTime = 0;
@@ -137,6 +124,8 @@ window.KronikPlayer = class KronikPlayer {
         this.player.on('timeupdate', () => {
             const currentTime = this.player.currentTime();
             const duration = this.player.duration();
+            
+            if (isNaN(duration)) return;
             
             // Обновляем не чаще, чем раз в секунду
             if (currentTime - lastUpdateTime < 1) {
@@ -153,22 +142,6 @@ window.KronikPlayer = class KronikPlayer {
                 // Сохраняем статистику просмотра при достижении ключевых точек
                 if ([25, 50, 75, 95].includes(watchPercentage)) {
                     console.log(`Просмотрено ${watchPercentage}%`);
-                    
-                    // AJAX запрос для сохранения статистики
-                    if (this.options.trackWatchProgress) {
-                        fetch('/api/video/track-progress', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': this.getCsrfToken()
-                            },
-                            body: JSON.stringify({
-                                video_id: this.videoId,
-                                progress: watchPercentage,
-                                watched_duration: currentTime
-                            })
-                        }).catch(error => console.error('Error tracking progress:', error));
-                    }
                 }
             }
             
@@ -176,20 +149,6 @@ window.KronikPlayer = class KronikPlayer {
             if (!videoWatched && watchPercentage >= 95) {
                 videoWatched = true;
                 console.log('Видео полностью просмотрено');
-                
-                // Аналитика полного просмотра
-                if (this.options.trackWatchComplete) {
-                    fetch('/api/video/complete-view', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': this.getCsrfToken()
-                        },
-                        body: JSON.stringify({
-                            video_id: this.videoId
-                        })
-                    }).catch(error => console.error('Error tracking completion:', error));
-                }
                 
                 // Удаляем сохраненную позицию, т.к. видео просмотрено
                 localStorage.removeItem(`kronik-video-time-${this.videoId}`);
@@ -208,6 +167,8 @@ window.KronikPlayer = class KronikPlayer {
     }
     
     setupKeyboardShortcuts() {
+        if (!this.player) return;
+        
         const handleKeyDown = (event) => {
             // Если фокус на элементе ввода, игнорируем
             if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
@@ -267,14 +228,6 @@ window.KronikPlayer = class KronikPlayer {
                     this.player.muted(!this.player.muted());
                     event.preventDefault();
                     break;
-                    
-                case '0': case '1': case '2': case '3': case '4':
-                case '5': case '6': case '7': case '8': case '9':
-                    // Числовые клавиши - перейти к проценту видео
-                    const percent = parseInt(event.key) * 10;
-                    this.player.currentTime(this.player.duration() * percent / 100);
-                    event.preventDefault();
-                    break;
             }
         };
         
@@ -288,6 +241,8 @@ window.KronikPlayer = class KronikPlayer {
     }
     
     setupNextVideoFeature() {
+        if (!this.player) return;
+        
         // Настраиваем только если задан колбэк или селектор следующего видео
         if (!this.options.nextVideoSelector && !this.options.onNextVideo) {
             return;
@@ -309,6 +264,8 @@ window.KronikPlayer = class KronikPlayer {
     }
     
     showNextVideoRecommendation(nextElement) {
+        if (!this.player) return;
+        
         if (!nextElement && this.options.nextVideoSelector) {
             nextElement = document.querySelector(this.options.nextVideoSelector);
         }
@@ -334,8 +291,8 @@ window.KronikPlayer = class KronikPlayer {
         
         // Получаем данные из элемента
         nextThumbnail = nextElement.querySelector('img')?.outerHTML || '';
-        nextTitle = nextElement.querySelector(this.options.nextTitleSelector || '.title')?.textContent || 'Следующее видео';
-        nextChannel = nextElement.querySelector(this.options.nextChannelSelector || '.channel')?.textContent || '';
+        nextTitle = nextElement.querySelector(this.options.nextTitleSelector || '.related-title')?.textContent || 'Следующее видео';
+        nextChannel = nextElement.querySelector(this.options.nextChannelSelector || '.related-channel')?.textContent || '';
         
         // Создаем и отображаем элемент с рекомендацией
         const nextOverlay = document.createElement('div');
@@ -390,11 +347,9 @@ window.KronikPlayer = class KronikPlayer {
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
     
-    getCsrfToken() {
-        return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
-    }
-    
     isPlayerInViewport() {
+        if (!this.player) return false;
+        
         const rect = this.player.el().getBoundingClientRect();
         return (
             rect.top >= 0 &&
@@ -405,5 +360,4 @@ window.KronikPlayer = class KronikPlayer {
     }
 }
 
-// Экспортируем класс для использования
 window.KronikPlayer = KronikPlayer;

@@ -27,6 +27,9 @@
 /* Video components (player overlays, comments, shortcuts panel) */
 @import url('video-components.css');
 
+/* Author application page */
+@import url('author-application.css');
+
 /* Studio */
 @import url('studio.css');
 

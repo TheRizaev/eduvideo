@@ -4,16 +4,15 @@
 
 {% block title %}{{ video.title }} - KRONIK{% endblock %}
 
-{% block head_extras %}
+{% block head %}
 <!-- Основной плеер -->
 <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
 <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
 
-<!-- Плагины для видеоплеера -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-quality-levels/2.1.0/videojs-contrib-quality-levels.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-http-source-selector/1.1.6/videojs-http-source-selector.min.js"></script>
+<!-- Наши кастомные стили для видеоплеера -->
+<link href="{% static 'css/video-player.css' %}" rel="stylesheet" />
 
-<!-- Наш кастомный плеер -->
+<!-- Важно: сначала загружаем плагин, затем наш скрипт KronikPlayer -->
 <script src="{% static 'js/video-player.js' %}"></script>
 {% endblock %}
 
@@ -157,174 +156,65 @@
 </div>
 
 <script>
+    // Проверяем, загружен ли видеоплеер и окно полностью загружено
     document.addEventListener('DOMContentLoaded', function() {
-        // Инициализация нашего кастомного плеера
-        const player = new KronikPlayer('kronik-player', {
-            videoId: '{{ video.id }}',
-            showNextVideo: true,
-            nextVideoSelector: '.related-video-card:first-child',
-            nextTitleSelector: '.related-title',
-            nextChannelSelector: '.related-channel',
-            trackWatchProgress: true,
-            trackWatchComplete: true
-        });
+        // Дополнительная проверка, что VideoJS (videojs) загружен
+        if (typeof videojs === 'undefined') {
+            console.error('VideoJS не загружен!');
+            return;
+        }
         
-        // Панель горячих клавиш
-        document.querySelector('.shortcuts-toggle').addEventListener('click', function() {
-            const panel = document.querySelector('.shortcuts-panel');
-            if (panel.style.display === 'none') {
-                panel.style.display = 'block';
-                this.textContent = '⌨️ Скрыть горячие клавиши';
-            } else {
-                panel.style.display = 'none';
-                this.textContent = '⌨️ Показать горячие клавиши';
-            }
-        });
-        
-        // Обработка лайков и дизлайков
-        const likeButton = document.getElementById('likeButton');
-        const dislikeButton = document.getElementById('dislikeButton');
-        const likeCount = document.getElementById('likeCount');
-        const dislikeCount = document.getElementById('dislikeCount');
-        
-        if (likeButton && dislikeButton) {
-            // Функция для проверки, поставлен ли лайк/дислайк пользователем
-            function loadReactions() {
-                const videoLikes = localStorage.getItem('kronik-video-likes') || '{}';
-                const videoLikesObj = JSON.parse(videoLikes);
-                
-                const videoId = '{{ video.id }}';
-                const reaction = videoLikesObj[videoId];
-                
-                // Сбрасываем состояние кнопок
-                likeButton.classList.remove('active');
-                dislikeButton.classList.remove('active');
-                
-                // Если пользователь уже реагировал, отмечаем активную кнопку
-                if (reaction === 'like') {
-                    likeButton.classList.add('active');
-                } else if (reaction === 'dislike') {
-                    dislikeButton.classList.add('active');
-                }
-            }
+        // Проверка, что наш KronikPlayer определен
+        if (typeof KronikPlayer === 'undefined') {
+            console.error('KronikPlayer не определен! Проверьте, правильно ли подключен файл video-player.js');
             
-            // Загружаем состояние при загрузке страницы
-            loadReactions();
-            
-            // Обработчики нажатий
-            likeButton.addEventListener('click', function() {
-                if (!likeButton.classList.contains('active')) {
-                    // Добавляем лайк
-                    likeButton.classList.add('active');
-                    dislikeButton.classList.remove('active');
-                    
-                    // Увеличиваем счетчик
-                    let likes = parseInt(likeCount.textContent) || 0;
-                    likeCount.textContent = likes + 1;
-                    
-                    // Сохраняем реакцию
-                    saveReaction('like');
-                    
-                    // API запрос на сервер (в будущем)
-                    // sendReaction('like');
-                } else {
-                    // Убираем лайк
-                    likeButton.classList.remove('active');
-                    
-                    // Уменьшаем счетчик
-                    let likes = parseInt(likeCount.textContent) || 0;
-                    if (likes > 0) likeCount.textContent = likes - 1;
-                    
-                    // Удаляем реакцию
-                    removeReaction();
-                    
-                    // API запрос на сервер (в будущем)
-                    // removeReactionRequest();
-                }
+            // Если KronikPlayer не определен, можно использовать стандартный VideoJS
+            try {
+                const player = videojs('kronik-player');
+                console.log('Используется стандартный VideoJS плеер вместо KronikPlayer');
+            } catch (err) {
+                console.error('Ошибка при инициализации стандартного VideoJS:', err);
+            }
+            return;
+        }
+        
+        // Если все загружено, инициализируем наш плеер
+        try {
+            const player = new KronikPlayer('kronik-player', {
+                videoId: '{{ video.id }}',
+                showNextVideo: true,
+                nextVideoSelector: '.related-video-card:first-child',
+                nextTitleSelector: '.related-title',
+                nextChannelSelector: '.related-channel',
+                trackWatchProgress: true,
+                trackWatchComplete: true
             });
+            console.log('KronikPlayer успешно инициализирован!');
+        } catch (err) {
+            console.error('Ошибка при инициализации KronikPlayer:', err);
             
-            dislikeButton.addEventListener('click', function() {
-                if (!dislikeButton.classList.contains('active')) {
-                    // Добавляем дизлайк
-                    dislikeButton.classList.add('active');
-                    likeButton.classList.remove('active');
-                    
-                    // Сохраняем реакцию
-                    saveReaction('dislike');
-                    
-                    // API запрос на сервер (в будущем)
-                    // sendReaction('dislike');
-                } else {
-                    // Убираем дизлайк
-                    dislikeButton.classList.remove('active');
-                    
-                    // Удаляем реакцию
-                    removeReaction();
-                    
-                    // API запрос на сервер (в будущем)
-                    // removeReactionRequest();
-                }
-            });
-            
-            // Функция для сохранения реакции в localStorage
-            function saveReaction(reactionType) {
-                const videoLikes = localStorage.getItem('kronik-video-likes') || '{}';
-                const videoLikesObj = JSON.parse(videoLikes);
-                
-                const videoId = '{{ video.id }}';
-                videoLikesObj[videoId] = reactionType;
-                
-                localStorage.setItem('kronik-video-likes', JSON.stringify(videoLikesObj));
-            }
-            
-            // Функция для удаления реакции
-            function removeReaction() {
-                const videoLikes = localStorage.getItem('kronik-video-likes') || '{}';
-                const videoLikesObj = JSON.parse(videoLikes);
-                
-                const videoId = '{{ video.id }}';
-                delete videoLikesObj[videoId];
-                
-                localStorage.setItem('kronik-video-likes', JSON.stringify(videoLikesObj));
+            // Запасной вариант - использовать стандартный VideoJS
+            try {
+                const player = videojs('kronik-player');
+                console.log('Используется стандартный VideoJS плеер как запасной вариант');
+            } catch (err2) {
+                console.error('Ошибка при инициализации стандартного VideoJS:', err2);
             }
         }
         
-        // Получаем текущий ID видео из URL
-        const currentPath = window.location.pathname;
-        const currentVideoId = parseInt(currentPath.split('/').filter(Boolean)[1]);
+        // Панель горячих клавиш
+        const shortcutsToggle = document.querySelector('.shortcuts-toggle');
+        const shortcutsPanel = document.querySelector('.shortcuts-panel');
         
-        // Получаем контейнер для рекомендуемых видео
-        const relatedVideosContainer = document.getElementById('related-videos-container');
-        
-        // Создаем рекомендации из существующих видео, исключая текущее
-        if (relatedVideosContainer && window.videoData) {
-            // Фильтруем видео, исключая текущее
-            const relatedVideos = window.videoData.filter(video => video.id !== currentVideoId);
-            
-            // Берем только первые 5 видео для рекомендаций
-            const recommendedVideos = relatedVideos.slice(0, 5);
-            
-            // Добавляем каждое видео в контейнер
-            recommendedVideos.forEach(video => {
-                const videoElement = document.createElement('div');
-                videoElement.className = 'related-video-card';
-                videoElement.onclick = function() {
-                    window.location.href = `/video/${video.id}/`;
-                };
-                
-                videoElement.innerHTML = `
-                    <div class="related-thumbnail">
-                        <img src="/static/previews/${video.id}.jpg" onerror="this.src='/static/placeholder.jpg'" alt="${video.title}">
-                        <div class="duration">${video.duration}</div>
-                    </div>
-                    <div class="related-info">
-                        <div class="related-title">${video.title}</div>
-                        <div class="related-channel">${video.channel}</div>
-                        <div class="related-stats">${video.views} • ${video.age}</div>
-                    </div>
-                `;
-                
-                relatedVideosContainer.appendChild(videoElement);
+        if (shortcutsToggle && shortcutsPanel) {
+            shortcutsToggle.addEventListener('click', function() {
+                if (shortcutsPanel.style.display === 'none') {
+                    shortcutsPanel.style.display = 'block';
+                    this.textContent = '⌨️ Скрыть горячие клавиши';
+                } else {
+                    shortcutsPanel.style.display = 'none';
+                    this.textContent = '⌨️ Показать горячие клавиши';
+                }
             });
         }
     });

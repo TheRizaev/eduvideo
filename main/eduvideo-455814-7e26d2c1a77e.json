@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "eduvideo-455814",
+  "private_key_id": "7e26d2c1a77e07dd46c48e55949e3d0c4cf2c99f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDqCFxt/tcDEE1B\nWsvEi0PVG4d/UDpCpRu61Leg1jTyEUH4eL9wjFW1X2SDd4QEjVfsJ0aFudaaNlRb\noFkRD9CTSs11PQITpfFNZSizQSi3JKAugV9UMTv4X77zYIEttNySQ0/5H2NS8L2t\nsS19Rma6u2yTk0H3ntzmOb4FumCyLrPeMEsiDVFQ0KFBhCL63xNY7WtzWWNkKiht\np9MGcSnOsjIDAxcQZEyfjfbtiPAf3aC4a4shVsR+BNuTwGRNHupnBp+Irs6J8kyF\nK2utHMG3TW0ZUB7nIa/1SsgzSJcVWpsEjHUMmh6UTVrkDI74Uh8VoiIiqJrUDT8t\nNxD9Y+KLAgMBAAECggEAHB+/GR+BL9wQp07wTSvojek4rO2zjU4ReVqWFUed+ze5\ntCYGk3w50d78fD6rkxnNPBLdiwpx0KcWF3YQiK1cL6comPMo7GWKYaD2ICcva7ra\nCQdWW7ltmdkfta2eOHjonNG8AEBrtjbkrxqApfJaPAxz7X7KdFBsqWS9AivgnOjR\nsoVOHHWwl2UxzZNvNBTBdNwC/F6bbffWx4jfu5O2RrRU/UT+8ns8xtRk9fVGSgoX\nIvu0YhVy+tKyrUU1c/RQuc4BRftQBNNyyHx3wdtQoMdplSdQ0CI6MymvYRBPzi9n\nkhIITAaKCs58zoK8UuelYedmH2nyXn0cQgBMiU7/aQKBgQD3zR4tgMBkcoLpPZmy\n52oeTlEYOmzXRaK180GCIZacEkQmcthb3qBljCFOEi3oJSGlM+wzTaH1e8Y65zpF\ntCNTRuk0lpxWnE0kmHzj/QApnYAqkyhlcCSQMfIMlv+BNYAguNI96OZpyCfpHVj8\nX9mWrTkvV72DfP2CBjEaZBrRxwKBgQDxxp97XzEAbEK8h7dxv+BkGj3C/svaiRrY\nQCPVjfxELJMcbLRJP4qb+dOT7ELv0WAYbxeu1uLrq2Py8hEp/aMfIlK8C+UMQXuE\nyHwH3fPWq5NNXMS/TRaY6HXfVL2keCeyQRmr0gLMy/Sn6IADktkxpPwsouQvei8a\nkZb2VzTpHQKBgQCdnGVZY877FKqXV4ru86nXZNDHrEGWGsCHIhXEg0CcPDIEkn9y\nz4MNk7eLRJzWTue7f+74IqSk0vkedfvmYdEmIrAptrHxlLCsWiD1kfIMhhUC/15u\nRom6/UmLIG+a60B3j5aJshz7o0dfSj9TJlPrNnps1k2/2DwV+4I32vwD+QKBgQCI\neuneF88ugO5vRGFeecTuXQ3OPEzQ8SJRPmu8CmmEBnGI0yg2TQMupykzUGQ8wkFv\nqY6B6NWx2U8TfmgH/yCM27A+bKyAbZqPSykQu88AuFvviNWbc6W07UxUpJ5k8Frg\nOfWG04c3Gk7iVdGlssieSJb9j3ol/uAGLHc+Wd4JVQKBgEz7TeyBbwgmuh8C+Wu3\nhjOqHPS09DsdoRxjYRt+KD6iIsLz3f2D4boqXKkJiB9hjvP1Yd0Bj5Zhg3+5cooy\nL7uQYyzjECGHcAdY2fFh2mlkC1dx/snh0B65L2SbZv9auQy2nkmPQDKMbSLlEftA\nzcuMKobhANE+HWZ6UM1Row8J\n-----END PRIVATE KEY-----\n",
+  "client_email": "eduvideo@eduvideo-455814.iam.gserviceaccount.com",
+  "client_id": "104315172981904324251",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/eduvideo%40eduvideo-455814.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
