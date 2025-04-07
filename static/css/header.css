@@ -17,7 +17,7 @@ header {
 }
 
 .dark-theme header {
-    background-color: rgba(17, 1, 8, 0.9);
+    background-color: var(--dark-bg);
     backdrop-filter: blur(10px);
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
 }
@@ -47,15 +47,6 @@ header {
     position: relative;
 }
 
-.logo::after {
-    content: "🐰";
-    position: absolute;
-    top: -15px;
-    right: -15px;
-    font-size: 1.2rem;
-    animation: hop 1s infinite;
-}
-
 /* Кнопки и действия */
 .actions {
     display: flex;
@@ -67,7 +58,7 @@ header {
 /* Переключатель темы */
 .theme-toggle {
     cursor: pointer;
-    padding: 0.6rem 1.2rem;
+    padding: 0.4rem 0.4rem;
     border-radius: 30px;
     background-color: var(--accent-color);
     color: var(--text-light);
@@ -76,7 +67,6 @@ header {
     transition: all 0.3s;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     box-shadow: 0 3px 8px rgba(159, 37, 88, 0.3);
 }
 

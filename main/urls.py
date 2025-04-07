@@ -2,7 +2,8 @@
 
 from django.urls import path
 from . import views
-from . import gcs_views  # Импортируем представления для GCS
+from . import gcs_views 
+from django.conf import settings
 
 urlpatterns = [
     path('', views.index, name='index'),  # Главная страница
@@ -23,3 +24,7 @@ urlpatterns = [
     path('api/delete-video/<str:video_id>/', gcs_views.delete_video_from_gcs, name='delete_video_from_gcs'),
     path('api/get-video-url/<str:video_id>/', gcs_views.get_video_url, name='get_video_url'),
 ]
+
+if settings.DEBUG:
+    from django.views.defaults import page_not_found
+    urlpatterns.append(path('404/', lambda request: page_not_found(request, None)))

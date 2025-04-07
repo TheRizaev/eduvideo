@@ -12,6 +12,9 @@ from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
 
+def custom_page_not_found(request, exception):
+    return render(request, 'main/404.html', status=404)
+
 def index(request):
     categories = Category.objects.all()
     return render(request, 'main/index.html', {'categories': categories})

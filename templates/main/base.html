@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     {% load static %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}ЭдуВидео{% endblock %}</title>
+    <title>{% block title %}KRONIK{% endblock %}</title>
+    <!-- Подключение favicon -->
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/auth.css' %}">
     <link rel="stylesheet" href="{% static 'css/fixes.css' %}">
+    <link rel="stylesheet" href="{% static 'css/error-pages.css' %}">
     <!-- Add studio.css if we're on the studio page -->
     {% if request.path == '/studio/' %}
     <link rel="stylesheet" href="{% static 'css/studio.css' %}">
@@ -18,7 +22,10 @@
     
     <header>
         <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
-        <div class="logo">KRONIK</div>
+        <div class="logo">
+            <img src="{% static 'Kronik-Light1.png' %}" alt="KRONIK" class="logo-img" width="50" height="50">
+            <span class="logo-text">KRONIK</span> 
+        </div>
         <div class="search-container">
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Поиск...">
@@ -32,7 +39,7 @@
             <button class="theme-toggle">
                 <span class="theme-icon sun">☀️</span>
                 <span class="theme-icon moon">🌙</span>
-                <span class="toggle-text">Светлая тема</span>
+                <span class="toggle-text"></span>
             </button>
             
             <div class="user-menu">

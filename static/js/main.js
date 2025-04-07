@@ -441,7 +441,6 @@ function setupThemeToggle() {
         setTimeout(() => {
             body.classList.toggle('dark-theme');
             body.classList.toggle('light-theme');
-            toggleText.textContent = isDark ? 'Темная тема' : 'Светлая тема';
         }, 500);
         
         setTimeout(() => {
@@ -550,11 +549,9 @@ function setupThemeToggle() {
         if (savedTheme === 'light') {
             body.classList.remove('dark-theme');
             body.classList.add('light-theme');
-            toggleText.textContent = 'Темная тема';
         } else {
             body.classList.remove('light-theme');
             body.classList.add('dark-theme');
-            toggleText.textContent = 'Светлая тема';
         }
     }
     
@@ -568,7 +565,6 @@ function setupThemeToggle() {
             
             // Обновляем текст кнопки
             const newTheme = body.classList.contains('light-theme') ? 'light' : 'dark';
-            toggleText.textContent = newTheme === 'light' ? 'Темная тема' : 'Светлая тема';
             
             // Сохраняем выбранную тему в localStorage
             localStorage.setItem('kronik-theme', newTheme);
