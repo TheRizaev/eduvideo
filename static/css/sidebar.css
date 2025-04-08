@@ -90,21 +90,6 @@
     border-left-color: var(--secondary-color);
 }
 
-/* Кроличий хвостик для активного элемента меню */
-.menu-item.active::after {
-    content: "";
-    position: absolute;
-    right: 2px;
-    top: 45%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    background-color: white;
-    border-radius: 50%;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    animation: pulse 1.5s infinite;
-}
-
 .menu-icon {
     margin-right: 1rem;
     font-size: 1.2rem;

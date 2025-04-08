@@ -21,7 +21,7 @@
     <div class="theme-transition dark"></div>
     
     <header>
-        <button id="sidebar-toggle" class="sidebar-toggle">☰</button>
+        <button id="sidebar-toggle" class="sidebar-toggle" style="color: #ffffff">☰</button>
         <div class="logo">
             <img src="{% static 'Kronik-Light1.png' %}" alt="KRONIK" class="logo-img" width="50" height="50">
             <span class="logo-text">KRONIK</span> 
@@ -29,7 +29,7 @@
         <div class="search-container">
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Поиск...">
-                <button class="search-button">🔍</button>
+                <button class="search-button"><img src="/static/icons/loop.svg" alt="Light mode" width="32" height="32"></button>
                 <div class="search-dropdown" id="search-dropdown">
                     <!-- Результаты поиска будут добавляться сюда -->
                 </div>
@@ -37,8 +37,8 @@
         </div>
         <div class="actions">
             <button class="theme-toggle">
-                <span class="theme-icon sun">☀️</span>
-                <span class="theme-icon moon">🌙</span>
+                <span class="theme-icon sun"><img src="/static/icons/moon.svg" alt="Light mode" width="24" height="24"></span>
+                <span class="theme-icon moon"><img src="/static/icons/sun.svg" alt="Dark mode" width="24" height="24"></span>
                 <span class="toggle-text"></span>
             </button>
             
@@ -54,48 +54,48 @@
                             </div>
                         </div>
                         <div class="dropdown-item" onclick="window.location.href='{% url 'profile' %}'">
-                            <div class="icon">👤</div>
+                            <div class="icon"><img src="/static/icons/profile.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Мой профиль</div>
                         </div>
                         
                         {% if user.profile.is_author %}
                         <div class="dropdown-item" onclick="window.location.href='{% url 'studio' %}'">
-                            <div class="icon">🎬</div>
+                            <div class="icon"><img src="/static/icons/camera.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Студия</div>
                         </div>
                         {% elif not user.profile.author_application_pending %}
                         <div class="dropdown-item" onclick="window.location.href='{% url 'become_author' %}'">
-                            <div class="icon">✍️</div>
+                            <div class="icon"><img src="/static/icons/hand.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Стать автором</div>
                         </div>
                         {% else %}
                         <div class="dropdown-item" style="cursor: default; opacity: 0.7;">
-                            <div class="icon">⏳</div>
+                            <div class="icon"><img src="/static/icons/sandtimer.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Заявка на рассмотрении</div>
                         </div>
                         {% endif %}
                         <div class="dropdown-item">
-                            <div class="icon">⚙️</div>
+                            <div class="icon"><img src="/static/icons/settings.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Настройки</div>
                         </div>
                         <div class="dropdown-item">
-                            <div class="icon">🎓</div>
+                            <div class="icon"><img src="/static/icons/courses.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Мои курсы</div>
                         </div>
                         <div class="dropdown-item">
-                            <div class="icon">📚</div>
+                            <div class="icon"><img src="/static/icons/books.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Библиотека</div>
                         </div>
                         <div class="dropdown-item">
-                            <div class="icon">📝</div>
+                            <div class="icon"><img src="/static/icons/progress.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Прогресс обучения</div>
                         </div>
                         <div class="dropdown-item">
-                            <div class="icon">🔍</div>
+                            <div class="icon"><img src="/static/icons/loop.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Помощь</div>
                         </div>
                         <div class="dropdown-item" onclick="window.location.href='{% url 'logout' %}'">
-                            <div class="icon">🚪</div>
+                            <div class="icon"><img src="/static/icons/exit.svg" alt="Light mode" width="24" height="24"></div>
                             <div>Выход</div>
                         </div>
                     </div>
@@ -114,69 +114,45 @@
     <div class="main-container">
         <div class="sidebar" id="sidebar">
             <div class="menu-item {% if request.path == '/' %}active{% endif %}" onclick="window.location.href='{% url 'index' %}'">
-                <div class="menu-icon">🏠</div>
+                <div class="menu-icon"><img src="/static/icons/house.svg" alt="Dark mode" width="32" height="32"></div>
                 <div class="menu-text">Главная</div>
             </div>
             <div class="menu-item">
-                <div class="menu-icon">🎓</div>
+                <div class="menu-icon"><img src="/static/icons/courses.svg" alt="Dark mode" width="32" height="32"></div>
                 <div class="menu-text">Курсы</div>
             </div>
             <div class="menu-item">
-                <div class="menu-icon">📚</div>
+                <div class="menu-icon"><img src="/static/icons/books.svg" alt="Dark mode" width="32" height="32"></div>
                 <div class="menu-text">Библиотека</div>
             </div>
             <div class="menu-item">
-                <div class="menu-icon">⏱</div>
+                <div class="menu-icon"><img src="/static/icons/timer.svg" alt="Dark mode" width="32" height="32"></div>
                 <div class="menu-text">История</div>
             </div>
             <div class="menu-item">
-                <div class="menu-icon">✓</div>
+                <div class="menu-icon"><img src="/static/icons/tip.svg" alt="Dark mode" width="32" height="32"></div>
                 <div class="menu-text">Подписки</div>
             </div>
             
             {% if user.is_authenticated %}
             <div class="menu-item {% if request.path == '/studio/' %}active{% endif %}" onclick="window.location.href='{% url 'studio' %}'">
-                <div class="menu-icon">🎬</div>
+                <div class="menu-icon"><img src="/static/icons/camera.svg" alt="Dark mode" width="32" height="32"></div>
                 <div class="menu-text">Студия</div>
             </div>
             {% endif %}
             
             <div class="sidebar-section">
-                <div class="sidebar-title">ОБРАЗОВАНИЕ</div>
-                <div class="menu-item">
-                    <div class="menu-icon">🧪</div>
-                    <div class="menu-text">Наука</div>
-                </div>
-                <div class="menu-item">
-                    <div class="menu-icon">🔢</div>
-                    <div class="menu-text">Математика</div>
-                </div>
-                <div class="menu-item">
-                    <div class="menu-icon">🌍</div>
-                    <div class="menu-text">История</div>
-                </div>
-                <div class="menu-item">
-                    <div class="menu-icon">💻</div>
-                    <div class="menu-text">Программирование</div>
-                </div>
-                <div class="menu-item">
-                    <div class="menu-icon">📊</div>
-                    <div class="menu-text">Экономика</div>
-                </div>
-            </div>
-            
-            <div class="sidebar-section">
                 <div class="sidebar-title">ИНСТРУМЕНТЫ</div>
                 <div class="menu-item">
-                    <div class="menu-icon">📝</div>
+                    <div class="menu-icon"><img src="/static/icons/paper.svg" alt="Light mode" width="24" height="24"></div>
                     <div class="menu-text">Заметки</div>
                 </div>
                 <div class="menu-item">
-                    <div class="menu-icon">📅</div>
+                    <div class="menu-icon"><img src="/static/icons/calendar.svg" alt="Light mode" width="24" height="24"></div>
                     <div class="menu-text">Расписание</div>
                 </div>
                 <div class="menu-item">
-                    <div class="menu-icon">🔍</div>
+                    <div class="menu-icon"><img src="/static/icons/loop.svg" alt="Light mode" width="24" height="24"></div>
                     <div class="menu-text">Поиск</div>
                 </div>
             </div>

@@ -4,32 +4,73 @@ import json
 from datetime import datetime
 from django.conf import settings
 
-def get_credentials_path():
-    """Возвращает путь к файлу с учетными данными Google Cloud Storage"""
-    # Ищем файл сначала в корне проекта, затем в папке приложения main
-    root_file_path = os.path.join(settings.BASE_DIR, "kronik-26102005-6949b1ae3add.json")
-    app_file_path = os.path.join(settings.BASE_DIR, "main", "kronik-26102005-6949b1ae3add.json")
+def find_json_file(start_dir=None, filename_part="kronik-26102005-6949b1ae3add.json"):
+    """
+    Расширенный поиск JSON-файла с ключом для Google Cloud
     
-    if os.path.exists(root_file_path):
-        return root_file_path
-    elif os.path.exists(app_file_path):
-        return app_file_path
-    else:
-        raise FileNotFoundError("Файл учетных данных GCS не найден")
+    Args:
+        start_dir (str, optional): Начальная директория для поиска. 
+                                   Если None, будет использован текущий проект.
+        filename_part (str): Часть имени файла для поиска
+    
+    Returns:
+        str: Полный путь к найденному файлу или None
+    """
+    import os
+    from django.conf import settings
+    
+    # Список возможных директорий для поиска
+    search_dirs = [
+        os.getcwd(),  # Текущая рабочая директория
+        settings.BASE_DIR,  # Корень Django-проекта
+        os.path.join(settings.BASE_DIR, 'config'),  # Папка конфигурации
+        os.path.join(settings.BASE_DIR, 'credentials'),  # Папка с credentials
+        os.path.join(settings.BASE_DIR, 'keys'),  # Папка с ключами
+    ]
+    
+    # Если передана конкретная стартовая директория
+    if start_dir:
+        search_dirs.insert(0, start_dir)
+    
+    # Расширенный поиск файла
+    for root_dir in search_dirs:
+        for root, dirs, files in os.walk(root_dir):
+            matching_files = [
+                os.path.join(root, file) 
+                for file in files 
+                if filename_part in file and file.endswith('.json')
+            ]
+            
+            if matching_files:
+                print(f"✅ Найден JSON-файл: {matching_files[0]}")
+                return matching_files[0]
+    
+    print("❌ JSON-файл для Google Cloud не найден!")
+    return None
 
 def init_gcs_client():
-    """Инициализирует клиент Google Cloud Storage с найденными учетными данными"""
+    """
+    Инициализирует клиент Google Cloud Storage с расширенным поиском ключа
+    """
     try:
-        # Устанавливаем переменную окружения с путем к файлу учетных данных
-        credentials_path = get_credentials_path()
+        # Пытаемся найти ключ
+        credentials_path = find_json_file()
+        
+        if not credentials_path:
+            # Если ключ не найден, пробуем использовать стандартную аутентификацию
+            from google.cloud import storage
+            return storage.Client()
+        
+        # Устанавливаем путь к ключу
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
         
         # Инициализируем клиент
         from google.cloud import storage
         client = storage.Client()
         return client
+    
     except Exception as e:
-        print(f"Ошибка при инициализации клиента GCS: {e}")
+        print(f"❌ Ошибка при инициализации клиента GCS: {e}")
         return None
     
 BUCKET_NAME = "kronik-portage"

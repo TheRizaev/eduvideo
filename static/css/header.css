@@ -43,7 +43,7 @@ header {
     font-size: 1.7rem;
     font-weight: bold;
     margin-left: 0.2rem;
-    color: var(--primary-color);
+    color: var(--text-light);
     position: relative;
 }
 
@@ -58,7 +58,7 @@ header {
 /* Переключатель темы */
 .theme-toggle {
     cursor: pointer;
-    padding: 0.4rem 0.4rem;
+    padding: 0.4rem 0.6rem;
     border-radius: 30px;
     background-color: var(--accent-color);
     color: var(--text-light);

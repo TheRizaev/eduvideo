@@ -15,18 +15,6 @@
     position: relative;
 }
 
-.studio-header::after {
-    content: "🐰";
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 20px;
-    background-color: var(--light-bg);
-    padding: 0 10px;
-    animation: hop 1s infinite;
-}
-
 .dark-theme .studio-header::after {
     background-color: var(--dark-bg);
 }
