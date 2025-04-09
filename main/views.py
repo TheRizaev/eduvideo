@@ -1,16 +1,16 @@
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Video, Category
 import random
-
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, AuthorApplicationForm
+from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, AuthorApplicationForm, EmailVerificationForm, UserDetailsForm
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
+import random
 
 def custom_page_not_found(request, exception):
     return render(request, 'main/404.html', status=404)
@@ -333,27 +333,180 @@ def search_results(request):
         'videos': videos
     })
 
+def send_verification_code(request, email):
+    # Generate verification code (6 digits)
+    verification_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    request.session['verification_code'] = verification_code
+    
+    # Send verification email
+    subject = 'KRONIK - Email Verification'
+    message = f'Your verification code is: {verification_code}'
+    send_mail(
+        subject,
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        fail_silently=False
+    )
+    return verification_code
+
 def register_view(request):
     if request.user.is_authenticated:
+        # Check if email is verified
+        if not request.user.profile.email_verified:
+            # If not verified, redirect to verification page
+            return redirect('verify_email')
+        # Check if user details are completed
+        if not request.user.first_name or not request.user.last_name:
+            return redirect('user_details')
         return redirect('index')
+    
+    # Check if we're in email verification phase
+    if 'registration_data' in request.session:
+        return redirect('verify_email')
         
+    # Initial registration form
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.success(request, f'Аккаунт создан для {username}!')
-            return redirect('index')
+            # Don't save yet, store in session and send verification email
+            request.session['registration_data'] = request.POST.dict()
+            
+            # Send verification code
+            email = form.cleaned_data.get('email')
+            send_verification_code(request, email)
+            
+            messages.info(request, f'Verification code sent to {email}. Please check your email.')
+            return redirect('verify_email')
     else:
         form = UserRegistrationForm()
     
     return render(request, 'accounts/register.html', {'form': form})
 
+def verify_email_view(request):
+    # If not in registration process and not logged in, redirect to register
+    if 'registration_data' not in request.session and not request.user.is_authenticated:
+        return redirect('register')
+        
+    # If logged in but email already verified, check if we need user details
+    if request.user.is_authenticated and request.user.profile.email_verified:
+        if not request.user.first_name or not request.user.last_name:
+            return redirect('user_details')
+        return redirect('index')
+        
+    # Get email from session or user object
+    if 'registration_data' in request.session:
+        email = request.session['registration_data'].get('email')
+    else:
+        email = request.user.email
+        
+    if request.method == 'POST':
+        verification_form = EmailVerificationForm(request.POST)
+        if verification_form.is_valid():
+            # Get stored verification code
+            stored_code = request.session.get('verification_code')
+            submitted_code = verification_form.cleaned_data['verification_code']
+            
+            # Verify the code
+            if stored_code == submitted_code:
+                # If in registration process
+                if 'registration_data' in request.session:
+                    # Get stored registration data
+                    reg_data = request.session['registration_data']
+                    
+                    # Create user account
+                    form = UserRegistrationForm(reg_data)
+                    if form.is_valid():
+                        user = form.save()
+                        
+                        # Set profile fields
+                        if hasattr(user, 'profile'):
+                            user.profile.date_of_birth = form.cleaned_data['date_of_birth']
+                            user.profile.identification = form.cleaned_data['identification']
+                            user.profile.email_verified = True
+                            user.profile.save()
+                        
+                        # Clean up session
+                        del request.session['registration_data']
+                        del request.session['verification_code']
+                        
+                        # Log the user in
+                        username = form.cleaned_data.get('username')
+                        password = form.cleaned_data.get('password1')
+                        user = authenticate(username=username, password=password)
+                        login(request, user)
+                        
+                        messages.success(request, f'Email verified successfully!')
+                        return redirect('user_details')
+                else:
+                    # For existing users verifying email
+                    request.user.profile.email_verified = True
+                    request.user.profile.save()
+                    
+                    # Clean up session
+                    if 'verification_code' in request.session:
+                        del request.session['verification_code']
+                        
+                    messages.success(request, 'Email successfully verified!')
+                    
+                    # Check if user details are completed
+                    if not request.user.first_name or not request.user.last_name:
+                        return redirect('user_details')
+                    return redirect('index')
+            else:
+                messages.error(request, 'Invalid verification code. Please try again.')
+        else:
+            for field, errors in verification_form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
+                    
+    else:
+        verification_form = EmailVerificationForm()
+        
+    # Handle resend code button
+    if request.GET.get('resend') == 'true':
+        if email:
+            send_verification_code(request, email)
+            messages.info(request, f'New verification code sent to {email}. Please check your email.')
+    
+    return render(request, 'accounts/verify_email.html', {
+        'form': verification_form,
+        'email': email
+    })
+
+def user_details_view(request):
+    # If not logged in, redirect to login
+    if not request.user.is_authenticated:
+        return redirect('login')
+        
+    # If email not verified, redirect to verification
+    if not request.user.profile.email_verified:
+        return redirect('verify_email')
+        
+    # If user details already completed, redirect to home
+    if request.user.first_name and request.user.last_name:
+        return redirect('index')
+        
+    if request.method == 'POST':
+        form = UserDetailsForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Thank you! Your profile is now complete.')
+            return redirect('index')
+    else:
+        form = UserDetailsForm(instance=request.user)
+    
+    return render(request, 'accounts/user_details.html', {'form': form})
+
 def login_view(request):
     if request.user.is_authenticated:
+        # Check if email is verified
+        if not request.user.profile.email_verified:
+            # If not verified, redirect to verification page
+            return redirect('verify_email')
+        # Check if user details are completed
+        if not request.user.first_name or not request.user.last_name:
+            return redirect('user_details')
         return redirect('index')
         
     if request.method == 'POST':
@@ -364,10 +517,22 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                
+                # Check if email is verified
+                if not user.profile.email_verified:
+                    # Send a new verification code
+                    send_verification_code(request, user.email)
+                    messages.info(request, f'Please verify your email. A verification code has been sent to {user.email}.')
+                    return redirect('verify_email')
+                
+                # Check if user details are completed
+                if not user.first_name or not user.last_name:
+                    return redirect('user_details')
+                    
                 next_page = request.GET.get('next', 'index')
                 return redirect(next_page)
             else:
-                messages.error(request, 'Неверное имя пользователя или пароль')
+                messages.error(request, 'Incorrect username or password')
     else:
         form = UserLoginForm()
     
@@ -379,11 +544,20 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
+    # Check if email is verified
+    if not request.user.profile.email_verified:
+        # If not verified, redirect to verification page
+        return redirect('verify_email')
+    
+    # Check if user details are completed
+    if not request.user.first_name or not request.user.last_name:
+        return redirect('user_details')
+        
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Ваш профиль обновлен!')
+            messages.success(request, 'Your profile has been updated!')
             return redirect('profile')
     else:
         form = UserProfileForm(instance=request.user.profile)

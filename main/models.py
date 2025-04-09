@@ -33,12 +33,15 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    identification = models.CharField(max_length=30, unique=True, null=True, blank=True)
+    email_verified = models.BooleanField(default=False)
     
-    # Новые поля для авторов
+    # Author fields
     is_author = models.BooleanField(default=False)
     author_application_pending = models.BooleanField(default=False)
     expertise_areas = models.ManyToManyField('ExpertiseArea', blank=True, related_name='experts')
-    credentials = models.TextField(blank=True, help_text="Образование, сертификаты и опыт")
+    credentials = models.TextField(blank=True, help_text="Education, certificates and experience")
     
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -47,7 +50,7 @@ class UserProfile(models.Model):
         return reverse('profile')
 
 
-# Добавьте новую модель для областей экспертизы
+# Add new model for expertise areas
 class ExpertiseArea(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
