@@ -1,0 +1,121 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Complete Your Profile - KRONIK{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-form-container">
+        <h2 class="auth-title">How should we address you?</h2>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="welcome-text">
+            <p>Great! Your email has been verified. Just one more step to complete your profile.</p>
+            <p>Please tell us how we should address you.</p>
+        </div>
+        
+        <form method="POST" class="auth-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_first_name">First Name <span class="required">*</span></label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="form-error">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_last_name">Last Name <span class="required">*</span></label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div class="form-error">{{ form.last_name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="auth-button">Complete Profile</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .welcome-text {
+        background-color: rgba(159, 37, 88, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        border-left: 3px solid var(--accent-color);
+        line-height: 1.5;
+        animation: subtle-pulse 3s infinite;
+    }
+    
+    @keyframes subtle-pulse {
+        0% { background-color: rgba(159, 37, 88, 0.1); }
+        50% { background-color: rgba(159, 37, 88, 0.15); }
+        100% { background-color: rgba(159, 37, 88, 0.1); }
+    }
+    
+    .dark-theme .welcome-text {
+        background-color: rgba(159, 37, 88, 0.2);
+    }
+    
+    @keyframes subtle-pulse-dark {
+        0% { background-color: rgba(159, 37, 88, 0.2); }
+        50% { background-color: rgba(159, 37, 88, 0.25); }
+        100% { background-color: rgba(159, 37, 88, 0.2); }
+    }
+    
+    .dark-theme .welcome-text {
+        animation: subtle-pulse-dark 3s infinite;
+    }
+    
+    /* Confetti animation for welcome */
+    .auth-title {
+        position: relative;
+    }
+    
+    .auth-title::after {
+        content: "🎉";
+        position: absolute;
+        font-size: 24px;
+        right: -10px;
+        top: -10px;
+        animation: celebrate 2s infinite;
+    }
+    
+    @keyframes celebrate {
+        0% { transform: scale(1) rotate(0); }
+        50% { transform: scale(1.2) rotate(15deg); }
+        100% { transform: scale(1) rotate(0); }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Focus on first name input
+        const firstNameInput = document.getElementById('id_first_name');
+        if (firstNameInput) {
+            firstNameInput.focus();
+        }
+        
+        // Add animation when form is submitted
+        const form = document.querySelector('.auth-form');
+        const submitButton = document.querySelector('.auth-button');
+        
+        if (form && submitButton) {
+            form.addEventListener('submit', function() {
+                submitButton.innerHTML = 'Completing... <span class="loading-dots"></span>';
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.8';
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -4,9 +4,30 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import UserProfile, ExpertiseArea
 import re
 from datetime import date
+from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
 class UserRegistrationForm(UserCreationForm):
+    # Override the username field to be a regular CharField with no validation
+    username = forms.CharField(
+        max_length=150,
+        required=True,
+        validators=[
+            RegexValidator(
+                regex=r'^[\w @+-]+$',  # разрешает пробелы
+                message=(
+                    "Enter a valid username. This value may contain only letters, "
+                    "numbers, spaces and @/./+/-/_ characters."
+                )
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'class': 'form-input',
+            'autocomplete': 'off'  # Prevent browser validation
+        }),
+        help_text="Можно использовать любые символы и пробелы между ними."
+    )
+    
     email = forms.EmailField(required=True)
     identification = forms.CharField(
         required=True,
@@ -18,10 +39,10 @@ class UserRegistrationForm(UserCreationForm):
         widget=forms.DateInput(attrs={
             'type': 'text', 
             'class': 'custom-date-picker',
-            'placeholder': 'DD/MM/YYYY'
+            'placeholder': 'ДД.ММ.ГГГГ'
         }),
         help_text="Your date of birth",
-        input_formats=['%d/%m/%Y', '%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y']
+        input_formats=['%d.%m.%Y', '%d/%m/%Y', '%d-%m-%Y', '%Y-%m-%d', '%m/%d/%Y']
     )
     
     class Meta:
@@ -35,10 +56,23 @@ class UserRegistrationForm(UserCreationForm):
         return email
     
     def clean_username(self):
-        # Allow spaces in username
+        # Get username with minimum validation - just ensuring it's not empty
         username = self.cleaned_data.get('username')
         if not username:
             raise forms.ValidationError('Username is required')
+            
+        # Only check if there's no consecutive spaces (single spaces between characters are allowed)
+        if re.search(r'\s\s+', username):
+            raise forms.ValidationError('Multiple consecutive spaces are not allowed')
+        
+        # Trim leading and trailing spaces
+        username = username.strip()
+            
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError('This username is already taken.')
+            
+        # Only other validation is maximum length which is handled by the field itself
         return username
         
     def clean_identification(self):
