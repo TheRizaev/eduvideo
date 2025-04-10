@@ -7,6 +7,9 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm, AuthorApplicationForm, EmailVerificationForm, UserDetailsForm
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
@@ -334,20 +337,34 @@ def search_results(request):
     })
 
 def send_verification_code(request, email):
-    # Generate verification code (6 digits)
+    # Генерируем код подтверждения (6 цифр)
     verification_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
     request.session['verification_code'] = verification_code
     
-    # Send verification email
-    subject = 'KRONIK - Email Verification'
-    message = f'Your verification code is: {verification_code}'
-    send_mail(
+    # Подготавливаем контекст для шаблона
+    context = {
+        'verification_code': verification_code,
+        'user_email': email,
+    }
+    
+    # Рендерим HTML письмо
+    html_message = render_to_string('emails/verification_email.html', context)
+    # Создаем текстовую версию письма (для клиентов без поддержки HTML)
+    plain_message = strip_tags(html_message)
+    
+    # Создаем и отправляем письмо
+    subject = 'KRONIK - Подтверждение регистрации'
+    email_message = EmailMessage(
         subject,
-        message,
+        html_message,
         settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False
+        [email]
     )
+    email_message.content_subtype = 'html'  # Указываем, что это HTML-письмо
+    
+    # Отправляем письмо
+    email_message.send()
+    
     return verification_code
 
 def register_view(request):

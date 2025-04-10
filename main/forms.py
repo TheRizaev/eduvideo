@@ -4,7 +4,6 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import UserProfile, ExpertiseArea
 import re
 from datetime import date
-from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
 class UserRegistrationForm(UserCreationForm):
@@ -12,15 +11,6 @@ class UserRegistrationForm(UserCreationForm):
     username = forms.CharField(
         max_length=150,
         required=True,
-        validators=[
-            RegexValidator(
-                regex=r'^[\w @+-]+$',  # разрешает пробелы
-                message=(
-                    "Enter a valid username. This value may contain only letters, "
-                    "numbers, spaces and @/./+/-/_ characters."
-                )
-            )
-        ],
         widget=forms.TextInput(attrs={
             'class': 'form-input',
             'autocomplete': 'off'  # Prevent browser validation
